@@ -20,6 +20,12 @@
       "path": "plugins/quick-commit",
       "description": "规范化 commit message 格式，提交后输出变更摘要。Use when 用户要求 commit、提交代码、或规范 commit message。",
       "version": "0.1.0"
+    },
+    {
+      "name": "grill-me",
+      "path": "plugins/grill-me",
+      "description": "对计划或设计进行深入追问，逐个解决决策树分支直至达成共识。Use when 用户要求审视计划、压力测试方案、或提到 \"grill me\" / \"拷问我\" / \"审视我\"。",
+      "version": "0.1.0"
     }
   ]
 }
