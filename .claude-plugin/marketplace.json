@@ -38,6 +38,12 @@
       "path": "plugins/triage-issue",
       "description": "调查问题根因并创建带 TDD 修复计划的 issue。Use when 用户报告 bug、要求创建 issue、提到 \"triage\" / \"排查\" / \"诊断\"。",
       "version": "0.1.0"
+    },
+    {
+      "name": "design-an-interface",
+      "path": "plugins/design-an-interface",
+      "description": "生成多个差异显著的模块接口设计方案。Use when 用户要求设计 API、探索接口选项、对比模块形态、或提到 \"design it twice\" / \"设计接口\" / \"设计两次\"。",
+      "version": "0.1.0"
     }
   ]
 }
