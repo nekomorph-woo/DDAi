@@ -24,7 +24,13 @@
     {
       "name": "grill-me",
       "path": "plugins/grill-me",
-      "description": "对计划或设计进行深入追问，逐个解决决策树分支直至达成共识。Use when 用户要求审视计划、压力测试方案、或提到 \"grill me\" / \"拷问我\" / \"审视我\"。",
+      "description": "对计划或设计进行系统性追问，逐个解决决策树分支直至达成共识。Use when 用户要求审视计划、压力测试方案、或提到 \"grill me\" / \"拷问我\" / \"审视我\"。",
+      "version": "0.1.0"
+    },
+    {
+      "name": "triage-issue",
+      "path": "plugins/triage-issue",
+      "description": "调查问题根因并创建带 TDD 修复计划的 issue。Use when 用户报告 bug、要求创建 issue、提到 \"triage\" / \"排查\" / \"诊断\"。",
       "version": "0.1.0"
     }
   ]
