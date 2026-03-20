@@ -1,21 +1,24 @@
 ---
 name: quick-commit
-description: 规范化 commit message 格式，提交后输出变更摘要。Use when 用户要求 commit、提交代码、或规范 commit message。
+description: 规范化 commit message 格式，支持关联 issue 自动关闭。Use when 用户要求 commit、提交代码、或规范 commit message。
 ---
 
 # Quick Commit
 
-规范化 commit message 格式，提交后输出简要变更信息。
+规范化 commit message 格式，支持关联 GitHub/GitLab issue 自动关闭。
 
 ## Commit Message 格式
 
 ```
 <type>(<scope>): <description>
+
+Closes #<issue1>, closes #<issue2>
 ```
 
 - **type**: 变更类型（必填）
 - **scope**: 影响范围（必填，多处修改选主要 scope）
-- **description**: 简要描述（单行，不支持 body/footer）
+- **description**: 简要描述（单行）
+- **Closes**: 关联 issue（可选，用户确认后添加）
 
 ### Type 类型
 
@@ -33,25 +36,77 @@ description: 规范化 commit message 格式，提交后输出变更摘要。Use
 
 ## 执行流程
 
-1. **分析变更**
-   - 运行 `git diff --cached --stat` 查看暂存文件
-   - 运行 `git diff --cached` 分析具体变更内容
-   - 推断合适的 type 和 scope
+### 1. 分析变更
 
-2. **检测语言**（按优先级）
-   1. 最近 5 条 commit message 语言
-   2. CLAUDE.md 内容语言
-   3. Claude Code 语言设置
+- 运行 `git diff --cached --stat` 查看暂存文件
+- 运行 `git diff --cached` 分析具体变更内容
+- 推断合适的 type 和 scope
 
-3. **生成 commit message**
-   - 使用检测到的语言编写 description
-   - 格式: `<type>(<scope>): <description>`
+### 2. 检测语言（按优先级）
 
-4. **执行提交**
-   - 运行 `git commit -m "<message>"`
-   - 获取提交 ID
+1. 最近 5 条 commit message 语言
+2. CLAUDE.md 内容语言
+3. Claude Code 语言设置
 
-5. **输出变更摘要**
+### 3. 生成 commit message
+
+- 使用检测到的语言编写 description
+- 格式: `<type>(<scope>): <description>`
+
+### 4. 询问关联 Issue
+
+使用 AskUserQuestion 询问：
+
+```
+是否关联 issue？[y/N]
+```
+
+若用户选择 `y`：
+
+1. **检测平台**
+   - 检查 remote URL 判断 GitHub 或 GitLab
+   - 验证 CLI 可用性（`gh` / `glab`）
+
+2. **拉取 issue 列表**
+
+   GitHub:
+   ```bash
+   gh issue list --state open --limit 20 --json number,title
+   ```
+
+   GitLab:
+   ```bash
+   glab issue list --state opened --per-page 20
+   ```
+
+3. **展示列表供多选**
+
+   使用 AskUserQuestion（multiSelect: true）：
+
+   ```
+   选择要关联的 issue（可多选）：
+   ○ #123 修复登录 token 过期问题
+   ○ #122 添加用户头像上传功能
+   ○ #121 优化数据库查询性能
+   ...
+   ○ 跳过（不关联）
+   ```
+
+4. **追加关闭语句**
+
+   若用户选择了 issue，追加到 commit message：
+   ```
+   <type>(<scope>): <description>
+
+   Closes #123, closes #122
+   ```
+
+### 5. 执行提交
+
+- 运行 `git commit -m "<message>"`
+- 获取提交 ID
+
+### 6. 输出变更摘要
 
 ## 控制台输出格式
 
@@ -64,6 +119,8 @@ description: 规范化 commit message 格式，提交后输出变更摘要。Use
 - <修改点2>
 - ...
 
+关联 issue: #123, #122（可选）
+
 <git stat 输出>
 ```
 
@@ -74,9 +131,10 @@ description: 规范化 commit message 格式，提交后输出变更摘要。Use
 提交 ID: 1ba2b60
 
 包含内容:
-- 新增 write-ddai-skill 项目级技能（5个文件）
-- 优化 CLAUDE.md 标题
-- 更新 write-a-skill 插件（添加示例引用和版本号检查项）
+- 新增用户认证模块
+- 修复 token 验证逻辑
+
+关联 issue: #123, #124
 
 5 files changed, 120 insertions(+), 30 deletions(-)
 ```
@@ -107,3 +165,12 @@ description: 规范化 commit message 格式，提交后输出变更摘要。Use
 | 测试文件变更 | `test` |
 | 依赖/构建配置变更 | `chore` |
 | CI/CD 配置变更 | `ci` |
+
+## Issue 关闭关键词
+
+两个平台都支持 `Closes`/`Fixes`/`Resolves`。使用 `Closes` 作为统一关键词。
+
+| 平台 | 支持情况 |
+|------|----------|
+| GitHub | ✅ |
+| GitLab | ✅ |
