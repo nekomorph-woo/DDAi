@@ -1,61 +1,50 @@
 ---
-name: write-a-skill
-description: 创建符合规范的用户技能，包含完整结构、渐进式信息展示和配套资源。Use when 用户要求创建、编写或开发新技能，或提到 "skill" / "技能" / "plugin" / "插件"。
+name: write-ddai-skill
+description: 创建 DDAi marketplace 插件，包含完整结构、渐进式信息展示和配套资源。Use when 用户要求创建、编写或开发 DDAi 插件，或提到 "DDAi plugin" / "DDAi 插件" / "marketplace plugin"。
 ---
 
-# 技能编写指南
+# DDAi 插件编写指南
 
-辅助用户创建个人技能。
+辅助用户创建 DDAi marketplace 插件。
 
 ## 流程
 
 1. **收集需求** - 确认：
-   - 技能覆盖的任务/领域
+   - 插件覆盖的任务/领域
    - 需要处理的具体场景
    - 是否需要可执行脚本或仅指令
    - 是否需要包含参考材料
 
-2. **确认存放位置** - 使用 AskUserQuestion 询问：
-   ```json
-   {
-     "question": "技能存放位置？",
-     "header": "位置",
-     "options": [
-       {"label": "全局技能", "description": "~/.claude/skills/ - 所有项目可用"},
-       {"label": "项目技能", "description": "<project>/.claude/skills/ - 仅当前项目可用"}
-     ]
-   }
-   ```
-
-3. **创建技能骨架** - 执行：
+2. **创建插件骨架** - 执行：
    ```bash
-   scripts/init-skill.sh <skill-name> <target-dir>
+   scripts/init-skill.sh <plugin-name>
    ```
 
-4. **起草内容** - 填充：
+3. **起草内容** - 填充：
    - SKILL.md：精简指令
    - reference/：详细文档（内容超过 500 行时）
    - examples/：使用示例
    - scripts/：确定性操作脚本
+
+4. **更新 marketplace.json** - 在 `.claude-plugin/marketplace.json` 中注册插件：
+   ```json
+   {
+     "name": "plugin-name",
+     "path": "plugins/plugin-name",
+     "description": "插件描述",
+     "version": "0.1.0"
+   }
+   ```
 
 5. **确认需求** - 展示草稿并验证：
    - 是否覆盖目标场景
    - 是否有遗漏或模糊之处
    - 各部分详略是否恰当
 
-## 技能存放位置
-
-推荐目录：
-
-| 位置 | 说明 |
-|------|------|
-| `~/.claude/skills/` | 用户全局技能（推荐） |
-| `<project>/.claude/skills/` | 项目级技能 |
-
-## 技能结构
+## 插件结构
 
 ```
-skill-name/
+plugins/plugin-name/
 ├── SKILL.md           # 主指令文件（必需）
 ├── reference/         # 详细文档目录（按需）
 │   └── *.md
@@ -67,30 +56,7 @@ skill-name/
 
 ## 示例
 
-- [完整技能示例](examples/advanced-skill.md)
-
-## SKILL.md 模板
-
-```md
----
-name: skill-name
-description: 能力简述。Use when [具体触发条件]。
----
-
-# 技能名称
-
-## 快速开始
-
-提供最简可运行示例。
-
-## 工作流程
-
-复杂任务分步执行并检查。
-
-## 高级功能
-
-详见 [reference/](reference/)。
-```
+- [基础插件结构](examples/basic-plugin.md)
 
 ## 描述规范
 
@@ -121,6 +87,19 @@ description: 能力简述。Use when [具体触发条件]。
 
 错误示例不区分技能差异。
 
+## 语气措辞规范
+
+遵循 `CLAUDE.md` 中的规范：
+
+| 要求 | 说明 |
+|------|------|
+| **命令式** | 使用祈使句，直接指示动作 |
+| **第三人称** | 描述技能能力，不用 "I will..." / "我会..." |
+| **直接简洁** | 不使用 "Please try to..." / "你可以尝试..." |
+| **克制专业** | 避免华丽辞藻，用词精准无歧义 |
+
+详见 [reference/tone-guide.md](reference/tone-guide.md)。
+
 ## 添加脚本条件
 
 满足以下条件时添加脚本：
@@ -149,4 +128,5 @@ description: 能力简述。Use when [具体触发条件]。
 - [ ] 统一术语使用
 - [ ] 提供具体示例
 - [ ] 限制引用层级（1 层以内）
+- [ ] 已在 marketplace.json 中注册
 - [ ] 版本号设置为 0.1.0
