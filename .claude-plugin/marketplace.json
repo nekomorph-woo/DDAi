@@ -1,0 +1,19 @@
+{
+  "name": "ddai",
+  "owner": {
+    "name": "nekomorph_566",
+    "email": "chaoowoo2233@gmail.com"
+  },
+  "metadata": {
+    "description": "DDAi 插件市场，为 Claude Code 用户提供需求、编程、设计、方案、审视等能力扩展",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "write-a-skill",
+      "path": "plugins/write-a-skill",
+      "description": "创建符合规范的用户技能，包含完整结构、渐进式信息展示和配套资源。",
+      "version": "0.1.0"
+    }
+  ]
+}
