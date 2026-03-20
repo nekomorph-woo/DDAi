@@ -93,7 +93,7 @@ description: 调查问题根因并创建带 TDD 修复计划的 issue。Use when
 - GitHub: `gh issue create`
 - GitLab: `glab issue create`
 
-**DO NOT** 创建前请用户审阅。创建后输出 issue URL 和根因摘要。
+**DO NOT** 在创建前请求用户审阅。直接创建，创建后输出 issue URL 和根因摘要。
 
 ## Issue 模板
 
@@ -135,13 +135,3 @@ RED-GREEN 循环列表：
 - [ ] 新测试全部通过
 - [ ] 现有测试不受影响
 ```
-
-## 持久化
-
-Issue 创建后，询问用户是否保存诊断记录：
-
-```
-是否保存诊断记录？[Y/n]
-```
-
-若确认，保存至 `<项目根目录>/triage-records/<YYYYMMDD>-<HHMM>-DIAGNOSIS.md`。格式详见 [reference/diagnosis-format.md](reference/diagnosis-format.md)。
