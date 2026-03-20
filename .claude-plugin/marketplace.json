@@ -28,6 +28,12 @@
       "version": "0.1.0"
     },
     {
+      "name": "tdd",
+      "path": "plugins/tdd",
+      "description": "测试驱动开发，采用垂直切片的 RED-GREEN-REFACTOR 循环。Use when 用户要求使用 TDD 开发功能或修复 bug、提到 \"red-green-refactor\" / \"测试先行\" / \"TDD\"。",
+      "version": "0.1.0"
+    },
+    {
       "name": "triage-issue",
       "path": "plugins/triage-issue",
       "description": "调查问题根因并创建带 TDD 修复计划的 issue。Use when 用户报告 bug、要求创建 issue、提到 \"triage\" / \"排查\" / \"诊断\"。",
