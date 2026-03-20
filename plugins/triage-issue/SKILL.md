@@ -87,13 +87,7 @@ description: 调查问题根因并创建带 TDD 修复计划的 issue。Use when
 
 检测项目使用的代码托管平台，使用对应 CLI 创建 issue。
 
-**平台检测**（按优先级）：
-
-1. 检查 remote URL：`git remote get-url origin`
-   - 含 `github.com` → GitHub
-   - 含 `gitlab` → GitLab
-2. 检查 CLI 可用性：`gh` 或 `glab`
-3. 默认 GitHub
+通过 `git remote get-url origin` 判断平台。
 
 **创建命令**：
 - GitHub: `gh issue create`
