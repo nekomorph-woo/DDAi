@@ -14,6 +14,12 @@
       "path": "plugins/write-a-skill",
       "description": "创建符合规范的用户技能，包含完整结构、渐进式信息展示和配套资源。",
       "version": "0.1.0"
+    },
+    {
+      "name": "quick-commit",
+      "path": "plugins/quick-commit",
+      "description": "规范化 commit message 格式，提交后输出变更摘要。Use when 用户要求 commit、提交代码、或规范 commit message。",
+      "version": "0.1.0"
     }
   ]
 }
