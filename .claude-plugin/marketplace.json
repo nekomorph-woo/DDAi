@@ -62,6 +62,12 @@
       "path": "plugins/prd-to-plan",
       "description": "使用垂直切片（tracer bullet）将 PRD 转化为多阶段实现计划，输出至当前项目根目录/plans/。Use when 用户要求拆分 PRD、创建实现计划、规划阶段、或提到 \"tracer bullets\" / \"垂直切片\"。",
       "version": "0.1.0"
+    },
+    {
+      "name": "request-refactor-plan",
+      "path": "plugins/request-refactor-plan",
+      "description": "通过用户访谈创建详细重构计划，拆分为安全增量提交，提交为 issue。Use when 用户要求规划重构、创建重构 RFC、或将重构拆分为安全增量步骤。",
+      "version": "0.1.0"
     }
   ]
 }
