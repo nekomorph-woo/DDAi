@@ -56,6 +56,12 @@
       "path": "plugins/prd-to-issues",
       "description": "使用垂直切片（tracer bullet）将 PRD 拆分为可独立认领的 issue。Use when 用户要求将 PRD 转为 issue、创建实现任务、或拆分 PRD 为工作项。",
       "version": "0.1.0"
+    },
+    {
+      "name": "prd-to-plan",
+      "path": "plugins/prd-to-plan",
+      "description": "使用垂直切片（tracer bullet）将 PRD 转化为多阶段实现计划，输出至当前项目根目录/plans/。Use when 用户要求拆分 PRD、创建实现计划、规划阶段、或提到 \"tracer bullets\" / \"垂直切片\"。",
+      "version": "0.1.0"
     }
   ]
 }
