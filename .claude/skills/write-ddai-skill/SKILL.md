@@ -56,7 +56,7 @@ plugins/plugin-name/
 ├── examples/          # 使用示例目录（按需）
 │   └── *.md
 └── scripts/           # 工具脚本目录（按需）
-    └── helper.js
+    └── helper.*       # bash/py/ts
 ```
 
 ## 示例
@@ -114,6 +114,27 @@ plugins/plugin-name/
 - 需要显式错误处理
 
 脚本比生成代码更节省 token 且更可靠。
+
+## 脚本语言选择
+
+| 语言 | 适用场景 | 约束 |
+|------|----------|------|
+| **Bash** | 文件/目录操作、简单命令组合 | 仅 Unix 系统 |
+| **Python** | 数据处理、API调用、中等复杂逻辑 | 仅使用标准库，不引入三方依赖 |
+| **TypeScript** | 复杂业务逻辑、与项目共享类型 | 必须提供 `npx ts-node` 运行方式或预编译 JS |
+
+**优先级**：Bash > Python > TypeScript
+
+**Python 标准库覆盖**：
+
+| 功能 | 标准库 | 是否需要三方库 |
+|------|--------|----------------|
+| JSON/CSV/XML | `json`, `csv`, `xml.etree` | ❌ |
+| HTTP 请求 | `urllib.request` | ⚠️ 可用但繁琐 |
+| Excel 解析 | - | ✅ 需要 `openpyxl` |
+| 文件系统 | `pathlib`, `os`, `shutil` | ❌ |
+
+如需三方库，在 SKILL.md 中明确声明依赖。
 
 ## 拆分文件条件
 
