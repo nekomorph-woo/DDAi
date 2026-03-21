@@ -44,6 +44,12 @@
       "path": "plugins/design-an-interface",
       "description": "生成多个差异显著的模块接口设计方案。Use when 用户要求设计 API、探索接口选项、对比模块形态、或提到 \"design it twice\" / \"设计接口\" / \"设计两次\"。",
       "version": "0.1.0"
+    },
+    {
+      "name": "write-a-prd",
+      "path": "plugins/write-a-prd",
+      "description": "通过用户访谈、代码库探索和模块设计创建 PRD，提交为 issue。Use when 用户要求编写 PRD、创建产品需求文档、规划新功能、或提到 \"PRD\" / \"产品需求\" / \"需求文档\"。",
+      "version": "0.1.0"
     }
   ]
 }

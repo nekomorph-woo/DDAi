@@ -90,6 +90,17 @@
 
 ---
 
+## 平台判断
+
+涉及 issue/PR 操作时，通过 `git remote get-url origin` 判断代码托管平台，使用对应 CLI：
+
+| 平台 | 判断条件 | CLI |
+|------|----------|-----|
+| GitHub | URL 包含 `github.com` | `gh` |
+| GitLab | URL 包含 `gitlab.com` 或私有 GitLab 域名 | `glab` |
+
+---
+
 ## 版本规范
 
 所有插件起始版本为 `0.1.0`。
