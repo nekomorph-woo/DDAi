@@ -50,6 +50,12 @@
       "path": "plugins/write-a-prd",
       "description": "通过用户访谈、代码库探索和模块设计创建 PRD，提交为 issue。Use when 用户要求编写 PRD、创建产品需求文档、规划新功能、或提到 \"PRD\" / \"产品需求\" / \"需求文档\"。",
       "version": "0.1.0"
+    },
+    {
+      "name": "prd-to-issues",
+      "path": "plugins/prd-to-issues",
+      "description": "使用垂直切片（tracer bullet）将 PRD 拆分为可独立认领的 issue。Use when 用户要求将 PRD 转为 issue、创建实现任务、或拆分 PRD 为工作项。",
+      "version": "0.1.0"
     }
   ]
 }
