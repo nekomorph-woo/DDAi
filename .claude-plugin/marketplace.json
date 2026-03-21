@@ -86,6 +86,12 @@
       "path": "plugins/ubiquitous-language",
       "description": "从对话中提取领域术语，构建一致性词汇表，标记歧义并提议权威术语。Use when 用户要求定义术语、统一词汇、构建词汇表、或提到\"统一语言\"/\"ubiquitous language\"/\"领域术语\"。",
       "version": "0.1.0"
+    },
+    {
+      "name": "make-dialogue-style",
+      "path": "plugins/make-dialogue-style",
+      "description": "管理项目对话风格配置，初始化或自定义 .claude/rules/dialogue-style.md，辅助编写其他 rules 文件。Use when 用户要求配置对话风格、设置输出规范、创建 rules 文件，或提到 \"dialogue-style\" / \"对话风格\" / \"rules\"。",
+      "version": "0.1.0"
     }
   ]
 }
