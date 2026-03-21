@@ -74,6 +74,18 @@
       "path": "plugins/improve-codebase-architecture",
       "description": "探索代码库发现架构改进机会，聚焦加深浅模块提升可测试性。Use when 用户要求改进架构、发现重构机会、整合紧耦合模块、或提高代码可测试性。",
       "version": "0.1.0"
+    },
+    {
+      "name": "edit-article",
+      "path": "plugins/edit-article",
+      "description": "按章节重组文章、提升清晰度、精简措辞。Use when 用户要求编辑文章、修订草稿、优化文案、或改进文档结构。",
+      "version": "0.1.0"
+    },
+    {
+      "name": "ubiquitous-language",
+      "path": "plugins/ubiquitous-language",
+      "description": "从对话中提取领域术语，构建一致性词汇表，标记歧义并提议权威术语。Use when 用户要求定义术语、统一词汇、构建词汇表、或提到\"统一语言\"/\"ubiquitous language\"/\"领域术语\"。",
+      "version": "0.1.0"
     }
   ]
 }
