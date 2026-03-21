@@ -68,6 +68,12 @@
       "path": "plugins/request-refactor-plan",
       "description": "通过用户访谈创建详细重构计划，拆分为安全增量提交，提交为 issue。Use when 用户要求规划重构、创建重构 RFC、或将重构拆分为安全增量步骤。",
       "version": "0.1.0"
+    },
+    {
+      "name": "improve-codebase-architecture",
+      "path": "plugins/improve-codebase-architecture",
+      "description": "探索代码库发现架构改进机会，聚焦加深浅模块提升可测试性。Use when 用户要求改进架构、发现重构机会、整合紧耦合模块、或提高代码可测试性。",
+      "version": "0.1.0"
     }
   ]
 }
