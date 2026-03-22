@@ -1,23 +1,27 @@
 #!/bin/bash
 
 # init-skill.sh - 快速创建技能骨架
-# 用法: init-skill.sh <skill-name> [target-dir]
+# 用法: init-skill.sh <skill-name> [location] [project-dir]
+#   location: global（默认）或 project
 
 set -e
 
 SKILL_NAME="$1"
-TARGET_DIR="${2:-$HOME/.claude/skills}"
+LOCATION_TYPE="${2:-global}"
+PROJECT_DIR="${3:-$(pwd)}"
 
 if [ -z "$SKILL_NAME" ]; then
-    echo "用法: init-skill.sh <skill-name> [target-dir]"
+    echo "用法: init-skill.sh <skill-name> [location] [project-dir]"
     echo ""
     echo "参数:"
-    echo "  skill-name  技能名称（使用 kebab-case）"
-    echo "  target-dir  目标目录（默认: ~/.claude/skills）"
+    echo "  skill-name   技能名称（使用 kebab-case）"
+    echo "  location     存放位置：global（默认）或 project"
+    echo "  project-dir  项目目录（仅 location=project 时使用，默认当前目录）"
     echo ""
     echo "示例:"
-    echo "  init-skill.sh my-skill"
-    echo "  init-skill.sh my-skill ./skills"
+    echo "  init-skill.sh my-skill                    # 全局技能"
+    echo "  init-skill.sh my-skill project            # 项目技能（当前项目）"
+    echo "  init-skill.sh my-skill project /path/to   # 项目技能（指定项目）"
     exit 1
 fi
 
@@ -27,6 +31,16 @@ if ! [[ "$SKILL_NAME" =~ ^[a-z][a-z0-9-]*$ ]]; then
     echo "示例: my-skill, api-client, json-formatter"
     exit 1
 fi
+
+# 根据位置类型确定目标目录
+case "$LOCATION_TYPE" in
+    project)
+        TARGET_DIR="$PROJECT_DIR/.claude/skills"
+        ;;
+    global|*)
+        TARGET_DIR="$HOME/.claude/skills"
+        ;;
+esac
 
 SKILL_PATH="$TARGET_DIR/$SKILL_NAME"
 
@@ -43,9 +57,9 @@ mkdir -p "$SKILL_PATH/examples"
 mkdir -p "$SKILL_PATH/scripts"
 
 # 创建 SKILL.md 模板
-cat > "$SKILL_PATH/SKILL.md" << 'EOF'
+cat > "$SKILL_PATH/SKILL.md" << EOF
 ---
-name: SKILL_NAME_PLACEHOLDER
+name: $SKILL_NAME
 description: 能力简述。Use when [具体触发条件]。
 ---
 
@@ -63,9 +77,6 @@ description: 能力简述。Use when [具体触发条件]。
 
 详见 [reference/](reference/)。
 EOF
-
-# 替换技能名称
-sed -i '' "s/SKILL_NAME_PLACEHOLDER/$SKILL_NAME/g" "$SKILL_PATH/SKILL.md"
 
 # 创建 .gitkeep 保持空目录
 touch "$SKILL_PATH/reference/.gitkeep"
