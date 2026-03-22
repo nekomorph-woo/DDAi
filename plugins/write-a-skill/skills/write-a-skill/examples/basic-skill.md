@@ -1,13 +1,39 @@
-# 基础技能示例
+# 基础插件示例
 
-以下是一个最小化的技能示例：
+以下是一个最小化的 DDAi 插件示例：
 
 ```
-my-skill/
-└── SKILL.md
+plugins/format-json/
+├── .claude-plugin/
+│   └── plugin.json
+├── commands/
+│   └── format-json.md
+└── skills/
+    └── format-json/
+        └── SKILL.md
 ```
 
-**SKILL.md 内容**：
+**plugin.json 内容**：
+
+```json
+{
+  "name": "format-json",
+  "version": "0.1.0"
+}
+```
+
+**commands/format-json.md 内容**：
+
+```md
+---
+name: format-json
+description: 格式化、验证和转换 JSON 数据。Use when 处理 JSON 文件，或用户提到 JSON 格式化、验证、转换。
+---
+
+执行 [format-json 技能](../skills/format-json/SKILL.md) 的完整流程。
+```
+
+**skills/format-json/SKILL.md 内容**：
 
 ```md
 ---
