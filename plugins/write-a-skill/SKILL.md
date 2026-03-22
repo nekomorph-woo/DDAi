@@ -1,95 +1,84 @@
 ---
 name: write-a-skill
-description: 创建符合规范的 DDAi marketplace 插件，包含完整结构、渐进式信息展示和配套资源。Use when 用户要求创建、编写或开发 DDAi 插件，或提到 "skill" / "技能" / "plugin" / "插件" / "marketplace plugin"。
+description: 创建符合规范的用户技能，包含完整结构、渐进式信息展示和配套资源。Use when 用户要求创建、编写或开发新技能，或提到 "skill" / "技能" / "plugin" / "插件"。
 ---
 
-# DDAi 插件编写指南
+# 技能编写指南
 
-辅助用户创建 DDAi marketplace 插件。
+辅助用户创建个人技能。
 
 ## 流程
 
 1. **收集需求** - 询问用户：
-   - 插件覆盖的任务/领域
+   - 技能覆盖的任务/领域
    - 需要处理的具体场景
    - 是否需要可执行脚本或仅指令
    - 是否需要包含参考材料
 
-2. **确认存放位置** - 默认为 `plugins/<name>/`
+2. **确认存放位置** - 使用 AskUserQuestion 询问：
+   ```json
+   {
+     "question": "技能存放位置？",
+     "header": "位置",
+     "options": [
+       {"label": "全局技能", "description": "~/.claude/skills/ - 所有项目可用"},
+       {"label": "项目技能", "description": "<project>/.claude/skills/ - 仅当前项目可用"}
+     ]
+   }
+   ```
 
-3. **创建插件骨架** - 执行：
+3. **创建技能骨架** - 执行：
    ```bash
-   scripts/init-skill.sh <plugin-name> ./plugins
+   scripts/init-skill.sh <skill-name> <target-dir>
    ```
 
 4. **起草内容** - 填充：
-   - `skills/<name>/SKILL.md`：精简指令
-   - `commands/<name>.md`：更新 description
-   - `skills/<name>/reference/`：详细文档（内容超过 100 行时）
-   - `skills/<name>/examples/`：使用示例
-   - `skills/<name>/scripts/`：确定性操作脚本
+   - SKILL.md：精简指令
+   - reference/：详细文档（内容超过 500 行时）
+   - examples/：使用示例
+   - scripts/：确定性操作脚本
 
 5. **处理资源文件** - 用户提供资源文件（模板、参考文档等）时：
-   - 拷贝到对应目录：参考文档 → `skills/<name>/reference/`，示例 → `skills/<name>/examples/`，脚本 → `skills/<name>/scripts/`
+   - 拷贝到对应目录：参考文档 → `reference/`，示例 → `examples/`，脚本 → `scripts/`
    - 在 SKILL.md 中使用相对路径引用
-   - 确保插件自包含，不依赖外部文件路径
+   - 确保技能自包含，不依赖外部文件路径
 
 6. **与用户确认** - 展示草稿并询问：
    - 是否覆盖目标场景
    - 是否有遗漏或模糊之处
    - 各部分详略是否恰当
 
-7. **更新 marketplace** - 提醒用户在 `marketplace.json` 中添加插件条目
+## 技能存放位置
 
-## 插件结构
+推荐目录：
+
+| 位置 | 说明 |
+|------|------|
+| `~/.claude/skills/` | 用户全局技能（推荐） |
+| `<project>/.claude/skills/` | 项目级技能 |
+
+## 技能结构
 
 ```
-plugins/<name>/
-├── .claude-plugin/
-│   └── plugin.json          # 插件清单（必需）
-├── commands/
-│   └── <name>.md            # 斜杠命令入口（必需）
-└── skills/
-    └── <name>/
-        ├── SKILL.md         # 主指令文件（必需）
-        ├── reference/       # 详细文档目录（按需）
-        │   └── *.md
-        ├── examples/        # 使用示例目录（按需）
-        │   └── *.md
-        └── scripts/         # 工具脚本目录（按需）
-            └── helper.*     # bash/py/ts
+skill-name/
+├── SKILL.md           # 主指令文件（必需）
+├── reference/         # 详细文档目录（按需）
+│   └── *.md
+├── examples/          # 使用示例目录（按需）
+│   └── *.md
+└── scripts/           # 工具脚本目录（按需）
+    └── helper.*       # bash/py/ts
 ```
 
 ## 示例
 
-- [基础插件示例](examples/basic-skill.md)
-- [完整插件示例](examples/advanced-skill.md)
-
-## plugin.json 模板
-
-```json
-{
-  "name": "<name>",
-  "version": "0.1.0"
-}
-```
-
-## commands/<name>.md 模板
-
-```md
----
-name: <name>
-description: 能力简述。Use when [具体触发条件]。
----
-
-执行 [<name> 技能](../skills/<name>/SKILL.md) 的完整流程。
-```
+- [完整技能示例](examples/advanced-skill.md)
 
 ## SKILL.md 模板
 
 ```md
 ---
-name: <name>
+name: skill-name
 description: 能力简述。Use when [具体触发条件]。
 ---
 
@@ -180,9 +169,6 @@ description: 能力简述。Use when [具体触发条件]。
 
 验证项目：
 
-- [ ] `.claude-plugin/plugin.json` 存在且格式正确
-- [ ] `commands/<name>.md` 存在且引用正确
-- [ ] `skills/<name>/SKILL.md` 存在
 - [ ] 描述包含触发条件（"Use when..."）
 - [ ] SKILL.md 控制在 100 行以内
 - [ ] 移除时效性信息
@@ -190,4 +176,3 @@ description: 能力简述。Use when [具体触发条件]。
 - [ ] 提供具体示例
 - [ ] 限制引用层级（1 层以内）
 - [ ] 版本号设置为 0.1.0
-- [ ] marketplace.json 已添加插件条目
