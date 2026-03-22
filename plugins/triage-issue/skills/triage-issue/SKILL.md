@@ -7,6 +7,19 @@ description: 调查问题根因并创建带 TDD 修复计划的 issue。Use when
 
 调查问题根因，创建包含 TDD 修复计划的 issue。支持 GitHub 和 GitLab。
 
+## 平台判断（流程开始时执行）
+
+**ALWAYS** 在任何涉及 issue 的操作前，先判断代码托管平台。
+
+执行 `git remote get-url origin` 获取远程 URL：
+
+| 平台 | 判断条件 | CLI |
+|------|----------|-----|
+| GitHub | URL 包含 `github.com` | `gh` |
+| GitLab | URL 包含 `gitlab.com` 或私有域名 | `glab` |
+
+后续所有 CLI 命令使用判断得到的 CLI 工具。
+
 ## 执行流程
 
 ### 1. 捕获问题
@@ -85,13 +98,10 @@ description: 调查问题根因并创建带 TDD 修复计划的 issue。Use when
 
 ### 5. 创建 Issue
 
-检测项目使用的代码托管平台，使用对应 CLI 创建 issue。
+使用已判断的 CLI 创建 issue：
 
-通过 `git remote get-url origin` 判断平台。
-
-**创建命令**：
-- GitHub: `gh issue create`
-- GitLab: `glab issue create`
+- GitHub: `gh issue create --title "..." --body "..."` 或 `gh issue create --file -` (从 stdin)
+- GitLab: `glab issue create --title "..." --description "..."` 或 `glab issue create --file -` (从 stdin)
 
 **DO NOT** 在创建前请求用户审阅。直接创建，创建后输出 issue URL 和根因摘要。
 

@@ -9,6 +9,19 @@ description: 通过用户访谈、代码库探索和模块设计创建 PRD，提
 
 可根据实际情况跳过非必要步骤。
 
+## 平台判断（流程开始时执行）
+
+**ALWAYS** 在任何涉及 issue 的操作前，先判断代码托管平台。
+
+执行 `git remote get-url origin` 获取远程 URL：
+
+| 平台 | 判断条件 | CLI |
+|------|----------|-----|
+| GitHub | URL 包含 `github.com` | `gh` |
+| GitLab | URL 包含 `gitlab.com` 或私有域名 | `glab` |
+
+后续所有 CLI 命令使用判断得到的 CLI 工具。
+
 ## 工作流程
 
 ### 1. 收集需求
@@ -52,11 +65,10 @@ description: 通过用户访谈、代码库探索和模块设计创建 PRD，提
 
 ### 5. 编写并提交 PRD
 
-完成理解后，按下方模板编写 PRD 并提交为 issue。
+完成理解后，按下方模板编写 PRD 并提交为 issue。使用已判断的 CLI：
 
-通过 `git remote get-url origin` 判断平台，使用对应 CLI：
-- GitHub: `gh issue create`
-- GitLab: `glab issue create`
+- GitHub: `gh issue create --title "..." --body "..."` 或 `gh issue create --file -` (从 stdin)
+- GitLab: `glab issue create --title "..." --description "..."` 或 `glab issue create --file -` (从 stdin)
 
 ## PRD 模板
 

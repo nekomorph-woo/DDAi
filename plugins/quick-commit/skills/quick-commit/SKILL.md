@@ -63,11 +63,16 @@ Closes #<issue1>, closes #<issue2>
 
 若用户选择 `y`：
 
-1. **检测平台**
-   - 检查 remote URL 判断 GitHub 或 GitLab
-   - 验证 CLI 可用性（`gh` / `glab`）
+1. **判断平台（ALWAYS 先执行）**
 
-2. **拉取 issue 列表**
+   执行 `git remote get-url origin` 获取远程 URL：
+
+   | 平台 | 判断条件 | CLI |
+   |------|----------|-----|
+   | GitHub | URL 包含 `github.com` | `gh` |
+   | GitLab | URL 包含 `gitlab.com` 或私有域名 | `glab` |
+
+2. **拉取 issue 列表**（使用已判断的 CLI）
 
    GitHub:
    ```bash
