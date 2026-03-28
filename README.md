@@ -93,7 +93,7 @@ DDAi 通过**技能插件化**解决上述问题：
 |------|------|----------|
 | **write-a-skill** | 创建新技能 | 开发个人技能或 DDAi 插件 |
 | **edit-article** | 文章编辑优化 | 重组章节、精简措辞、优化文档结构 |
-| **make-dialogue-style** | 对话风格配置 | 设置项目输出规范、创建 rules 文件 |
+| **improve-rule** | Rules 管理 | 初始化规则模板、五维度评估、改进规则、审计冲突 |
 
 ---
 
@@ -252,7 +252,7 @@ Bug 报告
 /plugin install triage-issue@ddai
 /plugin install write-a-skill@ddai
 /plugin install edit-article@ddai
-/plugin install make-dialogue-style@ddai
+/plugin install improve-rule@ddai
 ```
 
 ### 更新 Marketplace
@@ -308,7 +308,7 @@ DDAi/
 │   ├── triage-issue/          # 问题排查
 │   ├── write-a-skill/         # 创建技能
 │   ├── edit-article/          # 文章编辑
-│   └── make-dialogue-style/   # 对话风格配置
+│   └── improve-rule/          # Rules 管理
 ├── .claude/
 │   └── skills/                # 全局技能
 │       ├── write-ddai-skill/  # 创建 DDAi 插件
