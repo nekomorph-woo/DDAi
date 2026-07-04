@@ -3,7 +3,7 @@ name: pr-test-analyzer
 description: >
   测试覆盖率审查。检测缺失的关键路径测试、边界条件测试、异常路径测试，评估测试质量与断言充分性。
   Use when 需要审查测试覆盖率、检测缺失测试、提到 "pr-test-analyzer" / "测试审查" / "测试覆盖"。
-model: sonnet
+model: opus
 ---
 
 # pr-test-analyzer

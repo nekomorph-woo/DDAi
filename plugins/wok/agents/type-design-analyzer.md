@@ -3,7 +3,7 @@ name: type-design-analyzer
 description: >
   类型设计质量审查。检测类型安全、any 滥用、类型断言风险、泛型使用、接口契约一致性、不可变状态违规。
   Use when 需要审查类型设计、检测类型安全问题、提到 "type-design-analyzer" / "类型审查" / "类型安全"。
-model: sonnet
+model: opus
 ---
 
 # type-design-analyzer

@@ -3,7 +3,7 @@ name: comment-analyzer
 description: >
   注释准确性审查。检查注释与代码行为一致性、TODO/FIXME 标记、文档注释准确性、过时注释。
   Use when 需要审查注释质量、检查文档注释、提到 "comment-analyzer" / "注释审查" / "文档准确性"。
-model: sonnet
+model: opus
 ---
 
 # comment-analyzer

@@ -4,7 +4,7 @@ description: >
   CLAUDE.md 合规审查 + bug 检测。审查逻辑错误、边界条件、空值处理、数据一致性，
   并检测与 CLAUDE.md 项目规则的违规。Use when 需要代码审查、bug 检测、合规检查，
   或提到 "code-reviewer" / "代码审查" / "合规检查"。
-model: sonnet
+model: opus
 ---
 
 # code-reviewer

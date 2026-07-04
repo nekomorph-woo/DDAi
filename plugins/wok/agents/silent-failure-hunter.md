@@ -3,7 +3,7 @@ name: silent-failure-hunter
 description: >
   静默失败与错误处理审查。检测吞没异常、空 catch 块、缺失错误传播、资源泄漏、不当 fallback。
   Use when 需要审查错误处理、检测静默失败、提到 "silent-failure-hunter" / "错误处理" / "异常处理"。
-model: sonnet
+model: opus
 ---
 
 # silent-failure-hunter
