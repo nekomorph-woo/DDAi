@@ -99,7 +99,7 @@ wok-idea 是 `feat-`（大功能）管道的入口。生成的 system-name 使�
 | 风险可控 | 每个阶段的复杂度均衡 |
 | 依赖排序 | 有前置依赖的排在后面 |
 
-**phase 粒度约束**：每个 phase 控制在 1-3 个模块，确保下游管道（wok-define → wok-implement）单次产出在人类可审阅范围内。
+**phase 粒度约束**：每个 phase 控制在 1-3 个模块，确保下游管道（wok-define → wok-execute）单次产出在人类可审阅范围内。
 
 | 指标 | 控制目标 |
 |------|----------|
@@ -122,9 +122,9 @@ wok-idea 是 `feat-`（大功能）管道的入口。生成的 system-name 使�
 本技能产出多 phase 路线图后，每个 phase 独立走下游管道：
 
 ```
-Phase 1: wok-define → wok-design → wok-design-review → wok-plan → wok-implement
+Phase 1: wok-define → wok-design → wok-design-review → wok-plan → wok-execute
                                     ↓ （代码库已进化）
-Phase 2: wok-define（已知 Phase 1 约束）→ wok-design（adaptive: true）→ wok-design-review → wok-plan → wok-implement
+Phase 2: wok-define（已知 Phase 1 约束）→ wok-design（adaptive: true）→ wok-design-review → wok-plan → wok-execute
 ```
 
 - **wok-findings** 仅在 Phase 1 首次执行（探索代码库现状）

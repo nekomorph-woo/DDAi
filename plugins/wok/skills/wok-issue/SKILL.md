@@ -3,7 +3,7 @@ name: wok-issue
 description: 调查问题根因，生成本地 _issue.md 产物，并按平台条件创建远程 issue。Use when 用户报告 bug、要求创建 issue、提到 "wok-issue" / "排查" / "诊断"。
 pipeline:
   upstream: []
-  downstream: [wok-implement]
+  downstream: [wok-execute]
   gate: false
   output: document
   adaptive: false
@@ -118,8 +118,8 @@ pipeline:
 
 | 条件 | 判断 | 后续路径 |
 |------|------|----------|
-| 修复 ≤ 3 个文件，无架构变更 | 简单修复 | 生成本地产物，后续 `/wok-implement` |
-| 修复 > 3 个文件，或涉及模块边界 | 需要设计 | 生成本地产物后建议用户走 `wok-define` → `wok-design` → `wok-plan` → `/wok-implement` |
+| 修复 ≤ 3 个文件，无架构变更 | 简单修复 | 生成本地产物，后续 `/wok-execute` |
+| 修复 > 3 个文件，或涉及模块边界 | 需要设计 | 生成本地产物后建议用户走 `wok-define` → `wok-design` → `wok-plan` → `/wok-execute` |
 | 根因指向架构缺陷 | 需要重构 | 生成本地产物后建议用户先走设计管线 |
 
 当判断为"需要设计"或"需要重构"时，使用 `/wok-grill-me` 让用户确认修复范围评估是否正确。

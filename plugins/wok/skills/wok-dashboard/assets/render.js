@@ -693,7 +693,7 @@
     const planP = state.parsed.get(planKey);
     if (planP?.frontmatter?.status !== 'approved') return [{ action: '审阅并审批执行计划', detail: '切换到执行 tab' }];
     if (planP?.frontmatter?.status === 'approved') {
-      actions.push({ action: '开始实现', detail: '运行 wok-implement / wok-autopilot', priority: 'high' });
+      actions.push({ action: '开始实现', detail: '运行 wok-execute / wok-autopilot', priority: 'high' });
     }
 
     if (isReviewConverged()) {
@@ -710,7 +710,7 @@
       if (!acParsed) continue;
       const ac = parseAcceptanceCriteria(acParsed.raw);
       if (ac && ac.pendingAuto.length) {
-        actions.push({ action: `${ac.pendingAuto.length} 条自动验收标准未通过`, detail: '需 wok-implement 修复', priority: 'normal' });
+        actions.push({ action: `${ac.pendingAuto.length} 条自动验收标准未通过`, detail: '需 wok-execute 修复', priority: 'normal' });
       }
       if (ac && ac.pendingHuman.length) {
         actions.push({ action: `${ac.pendingHuman.length} 条验收标准需人工确认`, detail: '在 Dashboard 中确认', priority: 'low' });
@@ -759,12 +759,12 @@
     if (isReviewConverged()) {
       actions.push({ action: '修复完成', detail: 'Review 已收敛', priority: 'low' });
     } else {
-      actions.push({ action: '开始修复', detail: '运行 wok-implement / wok-autopilot', priority: 'high' });
+      actions.push({ action: '开始修复', detail: '运行 wok-execute / wok-autopilot', priority: 'high' });
     }
 
     // Acceptance criteria
     const ac = parseAcceptanceCriteria(state.parsed.get(issueKey).raw);
-    if (ac?.pendingAuto?.length) actions.push({ action: `${ac.pendingAuto.length} 条自动验收标准未通过`, detail: '需 wok-implement 修复', priority: 'normal' });
+    if (ac?.pendingAuto?.length) actions.push({ action: `${ac.pendingAuto.length} 条自动验收标准未通过`, detail: '需 wok-execute 修复', priority: 'normal' });
     if (ac?.pendingHuman?.length) actions.push({ action: `${ac.pendingHuman.length} 条验收标准需人工确认`, detail: '在 Dashboard 中确认', priority: 'low' });
 
     if (!actions.length) actions.push({ action: '检查管道状态', detail: '' });
@@ -786,7 +786,7 @@
       actions.push({ action: '优化完成', detail: 'Review 已收敛', priority: 'low' });
     }
 
-    if (!actions.length) actions.push({ action: '开始实现', detail: '运行 wok-implement / wok-autopilot', priority: 'high' });
+    if (!actions.length) actions.push({ action: '开始实现', detail: '运行 wok-execute / wok-autopilot', priority: 'high' });
     return actions;
   }
 
@@ -2768,7 +2768,7 @@
     const el = $('#tab-autopilot');
     const autopilotKeys = findAllFiles('_autopilot.md');
     if (!autopilotKeys.length) {
-      el.innerHTML = '<p style="color:#737373;">未找到 Autopilot 日志（_autopilot.md）<br><span style="font-size:12px">执行计划审批后，运行 <code>wok-implement / wok-autopilot</code> 自动生成</span></p>';
+      el.innerHTML = '<p style="color:#737373;">未找到 Autopilot 日志（_autopilot.md）<br><span style="font-size:12px">执行计划审批后，运行 <code>wok-execute / wok-autopilot</code> 自动生成</span></p>';
       return;
     }
 

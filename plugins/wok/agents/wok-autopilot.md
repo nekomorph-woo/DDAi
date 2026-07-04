@@ -9,7 +9,7 @@ description: >
   Use when plan 已审批后要求自动执行，或提到 "autopilot" / "自动执行" / "自动驾驶"。
 model: inherit
 skills:
-  - wok-implement
+  - wok-execute
   - wok-code-review
 tools: Agent, Skill, Read, Edit, Write, Bash, Grep, Glob
 permissionMode: auto
@@ -136,8 +136,9 @@ while (收敛条件未满足) {
 
    ```
    Agent({
-     description: "implement: <step-title>",
-     prompt: "调用 Skill('wok-implement')，执行以下任务：
+     subagent_type: "wok:wok-execute",
+     description: "execute: <step-title>",
+     prompt: "执行以下任务：
 
      任务：<step 标题 + 描述>
      文件：<文件列表>
@@ -147,11 +148,8 @@ while (收敛条件未满足) {
      - US-1 🤖①: <条件文字>
      - US-2 🤖③: <条件文字>
 
-     执行完整 TDD 循环（RED→GREEN→REFACTOR）。
-     验收标准是底线：每个 🤖 条目必须至少有一个测试覆盖。
-     除验收标准测试外，仍需编写边界条件、异常路径等测试。
-     完成后报告：变更文件列表、测试数量、验收标准覆盖情况、是否阻塞。
-     DO NOT 读取 _plan.md 或其他管道文档。"
+     模式由任务文件类型决定（代码→TDD / 文本→直接编辑）。
+     完成后报告：变更文件列表、模式、测试或自验结果、验收标准覆盖情况、是否阻塞。"
    })
    ```
 
@@ -188,16 +186,16 @@ while (有 🔴🟠 且 round < max-fix-rounds) {
        - 从 📐 一致性评估提取验证方向
     3. spawn impl subagent：
        Agent({
+         subagent_type: "wok:wok-execute",
          description: "fix CR finding: <finding-title>",
-         prompt: "调用 Skill('wok-implement')，执行以下修复任务：
+         prompt: "执行以下修复任务：
 
          任务：修复 <finding 描述>
          文件：<文件:行号>
          修改方案：<从 🔧 提取>
          验证：<测试覆盖修复场景>
 
-         执行完整 TDD 循环。完成后报告结果。
-         DO NOT 读取 _review.md 或其他管道文档。"
+         模式由任务文件类型决定。完成后报告结果。"
        })
     4. 等待 subagent 完成
     5. 重新运行 CR: Skill("wok-code-review") --scope diff

@@ -6,7 +6,7 @@ description: >
   Use when 用户要求代码审查、审查变更、提到
   "wok-code-review" / "代码审查" / "code review"。
 pipeline:
-  upstream: [wok-implement, wok-plan]
+  upstream: [wok-execute, wok-plan]
   downstream: []
   gate: false
   output: _review.md
@@ -156,7 +156,7 @@ pipeline:
    * 👤 项（人工确认）：保持 `[ ]` 不动，留给人类在 Dashboard 确认
 3. **写回文件**：仅修改 `[ ]` → `[x]`，不改变其他内容
 4. **结果提示**：
-   * 存在未通过的 🤖 项 → 输出「N 条自动验收标准未通过，需 wok-implement 修复」
+   * 存在未通过的 🤖 项 → 输出「N 条自动验收标准未通过，需 wok-execute 修复」
    * 存在待确认的 👤 项 → 输出「N 条验收标准需人工确认，请在 Dashboard 中操作」
 
 ## 两种调用场景

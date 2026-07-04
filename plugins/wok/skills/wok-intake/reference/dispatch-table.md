@@ -71,6 +71,6 @@ changed: 初始版本（wok-intake 接入）
 
 以下 skill 由用户在 wok-intake 完成后**单独决定**是否调用，wok-intake 不调度：
 
-- `wok-plan` / `wok-implement` / `wok-code-review` / `wok-handoff` / `wok-cr-insight` / `wok-apply-remarks`
+- `wok-plan` / `wok-execute` / `wok-code-review` / `wok-handoff` / `wok-cr-insight` / `wok-apply-remarks`
 
 这些是 plan 及之后的阶段，需要用户基于已归档文档主动启动。

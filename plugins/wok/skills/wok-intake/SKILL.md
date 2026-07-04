@@ -124,7 +124,7 @@ pipeline:
 下一步建议:
 1. 审阅文档，按需修改
 2. 运行 /wok-plan <system-name> 开始规划实现
-3. 实现阶段会调用 wok-implement → wok-code-review
+3. 实现阶段会调用 wok-execute → wok-code-review
 ```
 
 ## 与其他 skill 的区别
