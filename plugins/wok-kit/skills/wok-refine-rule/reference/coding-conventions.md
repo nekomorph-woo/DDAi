@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 编码原则与任务管理 — 兼容代码、提交控制、脚本语言选择、任务规划执行
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 编码规范
 
 ## 1. 兼容代码原则

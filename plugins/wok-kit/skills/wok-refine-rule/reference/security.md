@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 敏感信息检测与安全响应 — commit 前扫描明文密钥，检测到立即停止并警告
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 安全规范
 
 ## 1. 敏感信息检测

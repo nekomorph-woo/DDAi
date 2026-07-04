@@ -1,0 +1,29 @@
+<!-- wok-managed -->
+# Agents
+
+> 本文件由 wok 自动生成，规则源文件位于 `.codex/rules/`。请勿手动编辑；如需修改规则，编辑对应源文件后重新运行 wok 初始化。
+
+## 项目规则
+
+以下规则文件定义本项目的编码规范、对话风格、安全约束与技术栈：
+
+@.codex/rules/coding-philosophy.md
+@.codex/rules/coding-conventions.md
+@.codex/rules/dialogue-style.md
+@.codex/rules/language-and-communication.md
+@.codex/rules/security.md
+@.codex/rules/compact-guide.md
+@.codex/rules/pipeline-guide.md
+
+<!-- wok-managed-end -->
+
+<!--
+  部署说明（wok-refine-rule 读取本模板时遵循）：
+  1. 本文件拷贝到目标项目根目录，文件名固定 AGENTS.md
+  2. wok-managed 标记区间内的内容可幂等重写；区间外保留用户自定义内容
+  3. 自管理 skill（wok-tech-stack / wok-ontology / wok-ui-design）按需在 wok-managed 区间内追加 @ 引用：
+     - wok-tech-stack → @.codex/rules/stack-core.md 等
+     - wok-ontology  → @.codex/rules/ontology-core.md 等
+     - wok-ui-design → @.codex/rules/design-tokens.md
+  4. AGENTS.md 已存在且不含 wok-managed 标记 → 询问用户（追加 / 跳过 / 手动合并），不静默覆盖
+-->

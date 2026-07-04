@@ -1,6 +1,6 @@
 ---
 name: wok-refine-rule
-description: 管理 .claude/rules/ 配置文件：初始化模板、五维度评估规则质量、改进规则、审计规则间冲突。Use when 用户要求初始化规则、评估规则、改进规则、审计规则，或提到 "rules" / "对话风格" / "wok-refine-rule"。
+description: 管理项目 rules 配置文件（支持 Claude Code / Cursor / Codex 多端）：初始化模板、五维度评估规则质量、改进规则、审计规则间冲突。Use when 用户要求初始化规则、评估规则、改进规则、审计规则，或提到 "rules" / "对话风格" / "wok-refine-rule"。
 pipeline:
   upstream: [wok-distill-session]
   downstream: []
@@ -11,16 +11,18 @@ pipeline:
 
 # Rules 管理
 
-管理项目的 `.claude/rules/` 配置文件，提供初始化、评估、改进、审计四项能力。
+管理项目的 rules 配置文件，按目标端部署到 `.claude/rules/` / `.cursor/rules/` / `.codex/rules/`，提供初始化、评估、改进、审计四项能力。多端部署规范详见 [deploy-targets.md](reference/deploy-targets.md)。
 
 ## 职责总览
 
 | # | 职责 | 说明 |
 |---|------|------|
-| 1 | 初始化 | 拷贝 reference 模板到 `.claude/rules/` |
+| 1 | 初始化 | 拷贝 reference 模板到目标端 rules 目录（三端） |
 | 2 | 评估 | 对任意 rules 文件执行五维度评估，输出审查报告 |
 | 3 | 改进 | 基于评估结果对 rules 进行重构 |
 | 4 | 审计 | 检查多 rules 文件间的冲突/重叠/时效性 |
+
+> **v1 范围**：评估 / 改进 / 审计（职责 2/3/4）仅作用于 Claude Code 端 `.claude/rules/`；多端评估待 v2。初始化（职责 1）支持三端。
 
 ## 流程
 
@@ -38,7 +40,14 @@ pipeline:
 
 ## 1. 初始化
 
-### 1.1 配置文件列表
+### 1.1 确定目标端
+
+按 [deploy-targets.md](reference/deploy-targets.md) 的"步骤 0：确定目标端"执行：
+
+1. 检测项目根已有端目录（`.claude/` / `.cursor/` / `.codex/` / `AGENTS.md`），已存在端作默认
+2. AskUserQuestion 多选目标端（Claude Code / Cursor / Codex），用户未指定时默认仅 Claude Code
+
+### 1.2 配置文件列表
 
 | 文件 | 内容 |
 |------|------|
@@ -50,12 +59,36 @@ pipeline:
 | `pipeline-guide.md` | wok 管道场景速查与灵活入口指南 |
 | `language-and-communication.md` | 语言背景、意图推断与追问策略 |
 
-### 1.2 执行步骤
+### 1.3 三端部署规则
 
-1. 逐个检查 `.claude/rules/` 下上述文件是否存在
-2. 文件不存在 → 拷贝 [reference/](reference/) 下对应模板到 `.claude/rules/`
-3. 输出：`✅ 已创建 .claude/rules/<文件名>.md`
-4. 文件已存在 → 询问用户意图（查看 / 修改 / 添加 / 重置）
+详见 [deploy-targets.md](reference/deploy-targets.md)。摘要：
+
+| 端 | 目录 | 文件格式 | 入口 |
+|----|------|---------|------|
+| Claude Code | `.claude/rules/` | 原样 `.md`（保留 YAML 头） | 自动加载 |
+| Cursor | `.cursor/rules/` | `.mdc`（YAML 头 → frontmatter + 正文） | 自动加载 |
+| Codex | `.codex/rules/` | `.md`（**剥除** YAML 头） | 根 `AGENTS.md` 用 `@` 引用聚合 |
+
+### 1.4 执行步骤（按端分发）
+
+对 1.1 确定的每个目标端独立执行，同名文件存在时**跳过**（保留用户自定义）：
+
+**Claude Code 端**：
+1. 逐个检查 `.claude/rules/<file>.md` 是否存在
+2. 不存在 → 原样拷贝 `reference/<file>.md`（保留 YAML 头）
+3. 输出：`✅ 已创建 .claude/rules/<file>.md`
+
+**Cursor 端**：
+1. 逐个检查 `.cursor/rules/<file>.mdc` 是否存在
+2. 不存在 → 读 `reference/<file>.md`，提取顶部 YAML 头生成 Cursor frontmatter（`description` / `globs` / `alwaysApply`），正文写入 `.mdc`
+3. reference 缺 YAML 头 → fallback 用 H1 标题作 description，打 warning
+4. 输出：`✅ 已创建 .cursor/rules/<file>.mdc`
+
+**Codex 端**：
+1. 逐个检查 `.codex/rules/<file>.md` 是否存在
+2. 不存在 → 拷贝 `reference/<file>.md` 并**剥除顶部 YAML 头**
+3. 检查根 `AGENTS.md`：不存在或含 `<!-- wok-managed -->` → 从 [AGENTS.md.template](reference/AGENTS.md.template) 生成/更新；存在且无标记 → 询问（追加 wok 段 / 跳过 / 手动合并），不静默覆盖
+4. 输出：`✅ 已创建 .codex/rules/<file>.md` + AGENTS.md 入口状态
 
 ---
 

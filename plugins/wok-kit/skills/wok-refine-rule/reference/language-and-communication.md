@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 语言背景、意图推断与追问策略 — 用户语言适配、模糊表述追问澄清
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 语言与沟通
 
 ## 用户语言背景

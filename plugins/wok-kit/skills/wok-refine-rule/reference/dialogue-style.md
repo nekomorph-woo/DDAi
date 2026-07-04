@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 输出规范与交互行为 — 变更摘要格式、不确定性表达、ASCII 可视化、方案先行
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 对话风格规范
 
 ## 1. 输出规范

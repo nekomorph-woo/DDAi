@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: wok 管道场景速查与灵活入口指南 — 管道类型选择、场景映射、system-name 约定
+  cursor-globs: ""
+  always-apply: true
+---
+
 # wok 管道指南
 
 根据任务规模选择合适的管道类型。每种管道有固定的入口 SKILL 和 `.wok-plans/` 目录前缀。
