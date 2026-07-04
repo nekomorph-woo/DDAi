@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: Monorepo 结构 — pnpm workspace + Turborepo 多端项目组织
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 技术栈 — Monorepo 结构规则
 
 > 多端项目启用时生效，影响 wok-design 的模块划分和 wok-plan 的实现规划

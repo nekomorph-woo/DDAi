@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 桌面端技术栈 — Tauri 2 框架选型与实现约束
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 技术栈 — 桌面端规则
 
 > 影响 wok-design、wok-plan、wok-implement 中涉及桌面端的决策

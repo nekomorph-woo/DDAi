@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 移动端技术栈 — Expo + React Native 选型与实现约束
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 技术栈 — 移动端规则
 
 > 影响 wok-design、wok-plan、wok-implement 中涉及移动端的决策

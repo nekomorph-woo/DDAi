@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 本体论需求定义阶段 — 影响 wok-idea/wok-define 的元素提取与五问审查
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 本体论 — 需求定义阶段指令
 
 > 影响 wok-idea、wok-define 管道技能

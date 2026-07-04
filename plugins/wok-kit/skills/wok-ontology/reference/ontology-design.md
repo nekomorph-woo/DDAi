@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 本体论模块设计阶段 — 影响 wok-design 的 Entity/Relation/Action/State 设计
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 本体论 — 模块设计阶段指令
 
 > 影响 wok-design 管道技能

@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: Web 端技术栈 — 路线选择（纯前端/Serverless/传统服务器）与实现约束
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 技术栈 — Web 端规则
 
 > 影响 wok-design、wok-plan、wok-implement 中涉及 Web 端的决策

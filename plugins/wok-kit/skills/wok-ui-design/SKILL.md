@@ -31,18 +31,23 @@ description: |
 
 ### Step 0: 依赖检查
 
-检查以下文件是否存在：
-- `~/.claude/skills/hue/SKILL.md`
-- `~/.claude/skills/hallmark/SKILL.md`
-- `~/.claude/skills/material-3-skill/SKILL.md`
+本 skill 依赖三个外部 skill：`hue` / `hallmark` / `material-3-skill`。按当前 IDE 检测是否可用：
 
-缺失时输出安装命令，询问用户降级继续或中止安装。
+| IDE | 检测方式 |
+|-----|---------|
+| Claude Code | `~/.claude/skills/<name>/SKILL.md` 存在 |
+| Cursor | 无项目级 skill 机制，需用户预装并确认可用 |
+| Codex | `.codex/agents/<name>.toml` 或 `~/.codex/agents/` 存在；或用户声明已配置 |
 
-| Skill | 安装命令 | 用途 |
+缺失时输出安装命令（下表为 Claude Code 路径；Cursor / Codex 用户按各自机制安装到对应目录），询问用户降级继续或中止：
+
+| Skill | Claude Code 安装命令 | 用途 |
 |-------|---------|------|
 | hue | `git clone https://github.com/dominikmartn/hue ~/.claude/skills/hue` | 设计系统生成 |
 | hallmark | `npx skills add nutlope/hallmark` | 反同质化原型生成 |
 | material-3-skill | `git clone --depth 1 https://github.com/hamen/material-3-skill /tmp/m3s && cp -r /tmp/m3s/skills/material-3 ~/.claude/skills/material-3-skill && rm -rf /tmp/m3s` | MD3 合规审计 |
+
+> Codex / Cursor 用户：这三个 skill 需自行适配安装。本 skill 调用它们时按当前 IDE 的 skill 调用方式触发。
 
 ### Step 1: 风格选择与种子数据
 
@@ -76,7 +81,13 @@ description: |
 
 调用 hue skill，传入种子数据。产出要求见 [design-system-spec.md](reference/design-system-spec.md)。
 
-**Rule 注入**（自动执行）：完成后读取 `design-model.yaml`，基于 [design-token-rule-template.md](reference/design-token-rule-template.md) 生成 `.claude/rules/design-tokens.md`。后续开发将自动遵守此 rule。
+**Rule 注入**（自动执行）：完成后读取 `design-model.yaml`，基于 [design-token-rule-template.md](reference/design-token-rule-template.md) 生成 design-token 规则，部署到用户选定的目标端 rules 目录（三端格式见 [deploy-targets.md](../wok-refine-rule/reference/deploy-targets.md)）：
+
+- Claude Code：`.claude/rules/design-tokens.md`
+- Cursor：`.cursor/rules/design-tokens.mdc`
+- Codex：`.codex/rules/design-tokens.md`（剥 YAML 头）+ 根 `AGENTS.md` 追加 `@` 引用
+
+目标端未确定时，按 deploy-targets.md 步骤 0 检测 + 询问。
 
 展示验证门：产出文件清单 + 关键设计决策 + 品牌色/字体确认。用户确认后继续。
 
@@ -108,7 +119,7 @@ description: |
 - [ ] ui-seed/ 已初始化，用户已选择风格
 - [ ] seed-input.md 已基于所选风格填写
 - [ ] design-model.yaml + DESIGN.md 已生成
-- [ ] `.claude/rules/design-tokens.md` 已注入
+- [ ] design-token rule 已注入目标端 rules 目录（.claude / .cursor / .codex）
 - [ ] 用户已确认设计方向（验证门）
 - [ ] 各端原型已产出
 - [ ] MD3 审计报告已生成，品牌保留项已标注

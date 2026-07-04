@@ -2,7 +2,7 @@
 name: wok-ontology
 description: >
   初始化和管理本体论驱动的软件开发方法论规则。将方法论蒸馏为阶段性行为指令，
-  注入 .claude/rules/ 以影响 wok 管道技能的需求、设计、实现风格。
+  注入目标 IDE 的 rules 目录（.claude/.cursor/.codex）以影响 wok 管道技能的需求、设计、实现风格。
   Use when 用户要求初始化本体论规则、更新本体论指令、评估本体论规则质量，
   或提到 "wok-ontology" / "本体论" / "ontology" / "对象驱动"。
 pipeline:
@@ -15,13 +15,13 @@ pipeline:
 
 # 本体论规则管理
 
-初始化、更新、评估、移除本体论驱动的软件开发方法论规则。自管理 `ontology-*.md` 规则文件，独立于 `wok-refine-rule`。
+初始化、更新、评估、移除本体论驱动的软件开发方法论规则。自管理 `ontology-*.md` 规则文件，独立于 `wok-refine-rule`。规则部署到用户选定的目标端（Claude Code / Cursor / Codex），三端部署规范见 [deploy-targets.md](../wok-refine-rule/reference/deploy-targets.md)。
 
 ## 职责
 
 | # | 职责 | 说明 |
 |---|------|------|
-| 1 | 初始化 | 蒸馏方法论为阶段指令，注入 `.claude/rules/` |
+| 1 | 初始化 | 确定目标端 + 蒸馏方法论为阶段指令，注入目标端 rules 目录（三端） |
 | 2 | 更新 | 重新蒸馏或调整规则内容 |
 | 3 | 评估 | 检查规则质量和管道对齐程度 |
 | 4 | 移除 | 清理已注入的本体论规则 |
@@ -34,21 +34,30 @@ pipeline:
 
 ### 1. 初始化
 
-将蒸馏后的规则模板从 `reference/` 拷贝到 `.claude/rules/`：
+#### 1.0 确定目标端
 
-| 源文件 | 目标文件 |
-|--------|----------|
-| `reference/ontology-core.md` | `.claude/rules/ontology-core.md` |
-| `reference/ontology-define.md` | `.claude/rules/ontology-define.md` |
-| `reference/ontology-design.md` | `.claude/rules/ontology-design.md` |
-| `reference/ontology-implement.md` | `.claude/rules/ontology-implement.md` |
+按 [deploy-targets.md](../wok-refine-rule/reference/deploy-targets.md) 步骤 0：检测项目已有端目录 → AskUserQuestion 多选目标 IDE（Claude Code / Cursor / Codex）。用户未指定时默认仅 Claude Code。后续步骤对选中的每个端独立执行。
 
-执行步骤：
+#### 1.1 生成规则
 
-1. 逐个检查 `.claude/rules/ontology-*.md` 是否存在
-2. 不存在 → 拷贝 `reference/` 下对应模板
+将蒸馏后的规则模板从 `reference/` 部署到目标端 rules 目录（三端格式见 deploy-targets.md）：
+
+| 源文件 | Claude Code 目标 | Cursor 目标 | Codex 目标 |
+|--------|------------------|-------------|------------|
+| `reference/ontology-core.md` | `.claude/rules/ontology-core.md` | `.cursor/rules/ontology-core.mdc` | `.codex/rules/ontology-core.md` |
+| `reference/ontology-define.md` | `.claude/rules/ontology-define.md` | `.cursor/rules/ontology-define.mdc` | `.codex/rules/ontology-define.md` |
+| `reference/ontology-design.md` | `.claude/rules/ontology-design.md` | `.cursor/rules/ontology-design.mdc` | `.codex/rules/ontology-design.md` |
+| `reference/ontology-implement.md` | `.claude/rules/ontology-implement.md` | `.cursor/rules/ontology-implement.mdc` | `.codex/rules/ontology-implement.md` |
+
+#### 1.2 执行步骤
+
+1. 确定目标端（1.0）
+2. 对每个目标端独立执行（同名文件存在时跳过）：
+   - Claude Code：原样拷贝（保留 YAML 头）
+   - Cursor：YAML 头 → frontmatter + 正文，输出 `.mdc`
+   - Codex：剥 YAML 头拷贝 + 根 `AGENTS.md` 追加 `@` 引用
 3. 已存在 → 询问：保留 / 更新 / 查看差异
-4. 输出确认清单
+4. 输出确认清单（按端分组）
 
 确认输出：
 

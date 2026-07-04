@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 本体论实现阶段 — 影响 wok-plan/wok-implement 的 TDD 测试优先级与闭环验证
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 本体论 — 实现阶段指令
 
 > 影响 wok-plan、wok-implement 管道技能

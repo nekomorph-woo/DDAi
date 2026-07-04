@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 技术栈核心原则 — 多端共享（类型/领域/状态机）与分端（UI/存储/打包）策略
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 技术栈 — 核心原则
 
 ## 多端策略

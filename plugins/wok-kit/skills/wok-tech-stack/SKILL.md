@@ -2,7 +2,7 @@
 name: wok-tech-stack
 description: >
   初始化项目技术栈规则。根据用户选择的目标平台（桌面端/移动端/Web端），
-  蒸馏技术栈方法论为行为指令，注入 .claude/rules/ 以控制项目技术选型、
+  蒸馏技术栈方法论为行为指令，注入目标 IDE 的 rules 目录（.claude/.cursor/.codex）以控制项目技术选型、
   目录结构和迭代节奏。
   Use when 用户要求初始化技术栈规则、选型技术栈、或提到
   "wok-tech-stack" / "技术栈" / "tech stack" / "技术选型"。
@@ -16,13 +16,13 @@ pipeline:
 
 # 技术栈规则管理
 
-根据目标平台选择，初始化对应技术栈规则。自管理 `stack-*.md` 规则文件，独立于 `wok-refine-rule`。
+根据目标平台选择，初始化对应技术栈规则。自管理 `stack-*.md` 规则文件，独立于 `wok-refine-rule`。规则部署到用户选定的目标端（Claude Code / Cursor / Codex），三端部署规范见 [deploy-targets.md](../wok-refine-rule/reference/deploy-targets.md)。
 
 ## 职责
 
 | # | 职责 | 说明 |
 |---|------|------|
-| 1 | 初始化 | 询问平台目标，蒸馏方法论为规则，注入 `.claude/rules/` |
+| 1 | 初始化 | 询问平台目标 + 确定目标端，蒸馏方法论为规则，注入目标端 rules 目录（三端） |
 | 2 | 更新 | 调整平台目标或更新规则内容 |
 | 3 | 评估 | 检查规则质量和平台对齐程度 |
 | 4 | 移除 | 清理已注入的技术栈规则 |
@@ -34,6 +34,10 @@ pipeline:
 根据上下文判断意图：初始化 / 更新 / 评估 / 移除。意图不明确时询问用户。
 
 ### 1. 初始化
+
+#### 1.0 确定目标端
+
+按 [deploy-targets.md](../wok-refine-rule/reference/deploy-targets.md) 步骤 0：检测项目已有端目录 → AskUserQuestion 多选目标 IDE（Claude Code / Cursor / Codex）。用户未指定时默认仅 Claude Code。后续步骤对选中的每个端独立执行。
 
 #### 1.1 询问平台目标
 
@@ -49,7 +53,7 @@ pipeline:
 
 #### 1.2 生成规则
 
-根据平台选择，将 `reference/` 模板拷贝到 `.claude/rules/`：
+根据平台选择，将 `reference/` 模板部署到目标端 rules 目录（三端格式见 deploy-targets.md）：
 
 | 规则文件 | 条件 |
 |----------|------|
@@ -61,11 +65,13 @@ pipeline:
 
 #### 1.3 执行步骤
 
-1. 询问平台目标
-2. 逐个检查 `.claude/rules/stack-*.md` 是否存在
-3. 不存在 → 拷贝 `reference/` 下对应模板
-4. 已存在 → 询问：保留 / 更新 / 查看差异
-5. 输出确认清单
+1. 确定目标端（1.0）+ 询问平台目标（1.1）
+2. 对每个目标端独立执行（同名文件存在时跳过）：
+   - Claude Code：`.claude/rules/stack-*.md`（原样拷贝，保留 YAML 头）
+   - Cursor：`.cursor/rules/stack-*.mdc`（YAML 头 → frontmatter）
+   - Codex：`.codex/rules/stack-*.md`（剥 YAML 头）+ 根 `AGENTS.md` 追加 `@` 引用
+3. 已存在 → 询问：保留 / 更新 / 查看差异
+4. 输出确认清单（按端分组）
 
 确认输出：
 

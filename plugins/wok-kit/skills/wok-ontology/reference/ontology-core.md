@@ -1,3 +1,10 @@
+---
+wok:
+  cursor-description: 本体论驱动开发核心 — Entity/Attribute/Relation/Action/Constraint/State 六大概念
+  cursor-globs: ""
+  always-apply: true
+---
+
 # 本体论驱动的软件开发 — 核心原则
 
 ## 六大核心概念
