@@ -7,7 +7,7 @@ wok:
 
 # 技术栈 — 移动端规则
 
-> 影响 wok-design、wok-plan、wok-implement 中涉及移动端的决策
+> 影响 wok-design、wok-plan、wok-execute 中涉及移动端的决策
 
 ## 技术栈
 

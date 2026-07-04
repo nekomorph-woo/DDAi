@@ -103,7 +103,7 @@ mkdir -p ~/.claude/wok && cp "$(find ~/.claude/plugins/cache/wok/wok -name resol
 | `wok-design` | 拆模块 + 设计接口 + 记录决策 | — |
 | `wok-design-review` | 交叉验证一致性 | — |
 | `wok-plan` | 翻译为编码执行步骤 | — |
-| `wok-implement` | TDD 驱动开发（RED-GREEN-REFACTOR） | — |
+| `wok-execute` | TDD 驱动开发（RED-GREEN-REFACTOR） | — |
 | `wok-code-review` | 多 agent 并行代码审查 | `cr-` |
 | `wok-cr-insight` | 分析 Advisory 根因 + 修改方案 | — |
 | `wok-issue` | 调查根因 + TDD 修复计划 | `fix-` |

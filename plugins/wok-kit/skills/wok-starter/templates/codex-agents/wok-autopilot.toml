@@ -1,5 +1,5 @@
 name = "wok-autopilot"
-description = "Goal-Driven pipeline execution engine. Schedules implement → code-review loops by CHECKPOINT groups. Extracts tasks from plan for impl subagent, backfills step progress after CR."
+description = "Goal-Driven pipeline execution engine. Schedules implement → code-review loops by CHECKPOINT groups. Extracts tasks from plan for execute subagent, backfills step progress after CR."
 sandbox_mode = "workspace-write"
 model_reasoning_effort = "high"
 developer_instructions = """
@@ -73,9 +73,9 @@ Each iteration reads state from disk, doesn't rely on memory.
 Main loop structure:
 1. Read `_plan.md` → parse step groups
 2. For each group:
-   A. Implement all ACTION steps in group (spawn impl subagent for each)
+   A. Implement all ACTION steps in group (spawn execute subagent for each)
    B. Run code-review at CHECKPOINT
-   C. If 🔴🟠 findings → fix loop (spawn impl subagent, re-run CR)
+   C. If 🔴🟠 findings → fix loop (spawn execute subagent, re-run CR)
    D. If CR converges → batch backfill group ACTION steps [x]
 3. Check acceptance criteria → spawn impl for unmet 🤖 items
 
@@ -122,7 +122,7 @@ Only enter when CR finds 🔴🟠 findings. Max `max-fix-rounds` rounds (default
 Loop structure:
 1. Read `_review.md` extract 🔴🟠 findings with insight analysis
 2. Build fix tasks for each finding
-3. Spawn impl subagent for fixes
+3. Spawn execute subagent for fixes
 4. Re-run CR
 5. Check convergence
 6. Converged → batch backfill
@@ -145,7 +145,7 @@ After CR converges (Converged / Analyzed):
 After all groups complete:
 
 1. Read `## 验收标准` from `_define.md` or `_issue.md`
-2. 🤖 items with `[ ]` → build fix task, spawn impl subagent
+2. 🤖 items with `[ ]` → build fix task, spawn execute subagent
 3. 👤 items with `[ ]` → record pending manual confirmation
 4. Re-check after fixes
 
@@ -203,7 +203,7 @@ When autopilot ends (complete or handoff):
 Codex and Cursor CLIs don't support hooks. Fallback behavior:
 
 1. After each step, `git diff --stat HEAD` vs baseline
-2. Extract changed file list from impl subagent report
+2. Extract changed file list from execute subagent report
 3. Combine to confirm step completion
 4. Backfill logic same, only verification method differs
 

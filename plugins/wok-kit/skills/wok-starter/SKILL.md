@@ -32,13 +32,13 @@ description: 初始化项目的 wok 环境：部署 rules 规则文件（Claude 
 
 若步骤 1 选定 Codex 端，部署 wok 自带的 Codex agents：
 
-1. 源：本 skill 的 [templates/codex-agents/](templates/codex-agents/) `*.toml`（6 个预清洗 agent）
+1. 源：本 skill 的 [templates/codex-agents/](templates/codex-agents/) `*.toml`（7 个预清洗 agent，含 execute）
 2. 目标：项目根 `.codex/agents/*.toml`
 3. 同名文件存在时跳过
 
-**agent 清单**：`code-reviewer` / `comment-analyzer` / `pr-test-analyzer` / `silent-failure-hunter` / `type-design-analyzer` / `wok-autopilot`。
+**agent 清单**：`code-reviewer` / `comment-analyzer` / `pr-test-analyzer` / `silent-failure-hunter` / `type-design-analyzer` / `wok-autopilot` / `wok-execute`。
 
-> Codex 端用户需自行安装 wok 管道 skill（autopilot 依赖 `wok-implement` / `wok-code-review`，用户在 Codex 预装后可用）。
+> Codex 端用户需自行安装 wok 管道 skill（autopilot 依赖 `wok-execute` / `wok-code-review`，用户在 Codex 预装后可用）。
 
 未选 Codex 端时跳过此步骤。
 
@@ -80,6 +80,7 @@ Codex Agents（仅 Codex 端）:
 - ✅ .codex/agents/silent-failure-hunter.toml
 - ✅ .codex/agents/type-design-analyzer.toml
 - ✅ .codex/agents/wok-autopilot.toml
+- ✅ .codex/agents/wok-execute.toml
 
 .gitignore:
 - ✅ 已添加 .wok-plans/

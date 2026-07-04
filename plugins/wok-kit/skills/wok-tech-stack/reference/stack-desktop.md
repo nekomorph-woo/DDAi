@@ -7,7 +7,7 @@ wok:
 
 # 技术栈 — 桌面端规则
 
-> 影响 wok-design、wok-plan、wok-implement 中涉及桌面端的决策
+> 影响 wok-design、wok-plan、wok-execute 中涉及桌面端的决策
 
 ## 技术栈
 

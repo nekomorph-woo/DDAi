@@ -7,7 +7,7 @@ wok:
 
 # 技术栈 — Web 端规则
 
-> 影响 wok-design、wok-plan、wok-implement 中涉及 Web 端的决策
+> 影响 wok-design、wok-plan、wok-execute 中涉及 Web 端的决策
 
 ## 路线选择
 

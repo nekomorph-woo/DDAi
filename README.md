@@ -95,7 +95,7 @@ wok-design-review    交叉验证一致性
        │
 wok-plan             翻译为编码步骤
        │
-wok-implement        TDD 驱动开发
+wok-execute        TDD 驱动开发
        │
 wok-code-review      多 agent 并行代码审查
        │
@@ -171,7 +171,7 @@ wok/
 | `wok-design` | 拆模块、设计接口、记录设计决策 |
 | `wok-design-review` | 交叉验证模块设计的一致性和完整性 |
 | `wok-plan` | 将模块设计翻译为编码执行计划 |
-| `wok-implement` | TDD 驱动开发（RED-GREEN-REFACTOR） |
+| `wok-execute` | TDD 驱动开发（RED-GREEN-REFACTOR） |
 | `wok-code-review` | 多 agent 并行代码审查，自动修复 🔴🟠 问题 |
 | `wok-cr-insight` | 分析审查报告 🟡 Advisory 根因，追加修改方案 |
 | `wok-issue` | 调查问题根因，创建带 TDD 修复计划的 issue |
