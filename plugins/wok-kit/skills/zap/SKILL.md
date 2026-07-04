@@ -45,8 +45,8 @@ Closes #<issue1>, closes #<issue2>
 ### 2. 检测语言（按优先级）
 
 1. 最近 5 条 commit message 语言
-2. CLAUDE.md 内容语言
-3. Claude Code 语言设置
+2. 项目规则文件内容语言（`CLAUDE.md` 或 `AGENTS.md`，按项目实际使用的端）
+3. 当前 IDE 语言设置
 
 ### 3. 生成 commit message
 

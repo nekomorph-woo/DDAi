@@ -40,7 +40,8 @@ description: >
 
 1. 检查环境变量 `CLAUDE_CODE_SESSION` 或进程名是否包含为 `claude` → **Claude Code**
 2. 检查环境变量 `CURSOR_AGENT_SESSION` 或进程名是否包含为 `agent` → **Cursor CLI**
-3. 均无法判断 → **询问用户**
+3. 检查环境变量 `CODEX_SESSION` 或进程名是否包含为 `codex` → **Codex CLI**
+4. 均无法判断 → **询问用户**
 
 ### 5. 输出启动指令
 
@@ -75,6 +76,24 @@ claude --agent <agent-name> --model sonnet <system-name>
 ```
 
 提示：agent 使用 `model: inherit`，继承 TUI 当前选择的模型。
+
+#### Codex CLI 环境
+
+```
+🚀 Agent 启动指令
+
+📋 系统: <system-name>
+📊 计划: <N> steps, <M> 待完成
+🤖 Agent: <agent-name>
+
+在新终端运行:
+codex
+# 进入 TUI 后切换到对应 agent:
+/agent <agent-name>
+<system-name>
+```
+
+提示：Codex subagent 仅在用户显式要求时 spawn；嵌套 spawn（如 autopilot → impl）需在 `.codex/config.toml` 的 `[agents]` 调高 `max_depth`（默认 1）。
 
 #### 用户在 TUI 内执行
 

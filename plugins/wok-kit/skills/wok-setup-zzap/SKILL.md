@@ -31,6 +31,10 @@ pipeline:
 
 ### 1. 初始化
 
+#### 1.0 确定目标端
+
+按 [deploy-targets.md](../wok-refine-rule/reference/deploy-targets.md) 步骤 0：检测项目已有端目录 → AskUserQuestion 选择目标 IDE（Claude Code / Cursor / Codex）。zzap 部署到选定端，用户未指定时默认 Claude Code。
+
 #### 1.1 扫描版本文件
 
 按优先级检测以下文件（使用 `ls` 检查存在性 + Read 读取内容）：
@@ -102,7 +106,10 @@ pipeline:
 | `{{ENABLE_CHANGELOG}}` | `启用` 或 `不启用` |
 | `{{ENABLE_RELEASE}}` | `启用` 或 `不启用` |
 
-3. 写入 `<project>/.claude/skills/zzap/SKILL.md`（如目录不存在先 `mkdir -p`）
+3. 按目标端写入（目录不存在先 `mkdir -p`）：
+   - Claude Code：`<project>/.claude/skills/zzap/SKILL.md`（占位符替换后的模板原文）
+   - Cursor：`<project>/.cursor/rules/zzap.mdc`（顶部加 frontmatter `description: 智能提交与版本管理` / `alwaysApply: false`，正文为模板内容）
+   - Codex：`<project>/.codex/agents/zzap.toml`（`name = "zzap"` + `description` + `sandbox_mode = "workspace-write"` + `developer_instructions` 包裹模板正文）
 
 #### 1.4 输出确认
 
@@ -116,14 +123,14 @@ pipeline:
 - CHANGELOG: ✅ 启用 / ❌ 不启用
 - 版本发布资料整理: ✅ 启用 / ❌ 不启用
 
-使用 /zzap 执行智能提交
+使用 zzap 执行智能提交（Claude Code: `/zzap` slash；Cursor / Codex: 调用 zzap rule/agent）
 ```
 
 ### 2. 更新
 
 触发条件：版本文件变更、功能开关调整。
 
-1. 读取当前 `.claude/skills/zzap/SKILL.md` 的配置
+1. 读取当前目标端的 zzap 配置（CC: `.claude/skills/zzap/SKILL.md` / Cursor: `.cursor/rules/zzap.mdc` / Codex: `.codex/agents/zzap.toml`）
 2. 询问需要更新的项目
 3. 重新执行扫描（版本文件）或调整开关
 4. 重新生成 zzap SKILL.md
@@ -131,9 +138,9 @@ pipeline:
 
 ### 3. 移除
 
-1. 确认 `.claude/skills/zzap/` 存在
+1. 确认目标端 zzap 文件存在（CC: `.claude/skills/zzap/` / Cursor: `.cursor/rules/zzap.mdc` / Codex: `.codex/agents/zzap.toml`）
 2. 询问用户确认
-3. 删除 `.claude/skills/zzap/` 目录
+3. 删除对应端 zzap 文件/目录
 4. 输出移除确认
 
 ## 参考材料

@@ -15,14 +15,29 @@ description: 创建符合规范的用户技能，包含完整结构、渐进式�
    - 是否需要可执行脚本或仅指令
    - 是否需要包含参考材料
 
-2. **确认存放位置** - 使用 AskUserQuestion 询问：
+2. **确认目标端与存放位置** - 使用 AskUserQuestion 依次询问：
+
+   **2.1 目标端**（决定产出格式与目录）
+   ```json
+   {
+     "question": "技能面向哪个 IDE？",
+     "header": "目标端",
+     "options": [
+       {"label": "Claude Code", "description": "产出 SKILL.md 到 .claude/skills/"},
+       {"label": "Cursor", "description": "产出 .mdc 到 .cursor/rules/（无 skill 机制，降级为 rule）"},
+       {"label": "Codex", "description": "产出 .toml 到 .codex/agents/（agent 形式，skill 机制演进中）"}
+     ]
+   }
+   ```
+
+   **2.2 存放位置**（Cursor 仅项目级）
    ```json
    {
      "question": "技能存放位置？",
      "header": "位置",
      "options": [
-       {"label": "全局技能", "description": "~/.claude/skills/ - 所有项目可用"},
-       {"label": "项目技能", "description": "<project>/.claude/skills/ - 仅当前项目可用"}
+       {"label": "全局", "description": "Claude Code: ~/.claude/skills/；Codex: ~/.codex/agents/"},
+       {"label": "项目级", "description": "Claude Code: <project>/.claude/skills/；Cursor: <project>/.cursor/rules/；Codex: <project>/.codex/agents/"}
      ]
    }
    ```
@@ -43,10 +58,12 @@ description: 创建符合规范的用户技能，包含完整结构、渐进式�
    - 候选名称基于需求关键词提炼，遵循 `kebab-case` 命名
    - 用户选择 "Other" 可自行输入名称
 
-4. **创建技能骨架** - 执行：
+4. **创建技能骨架** - 按目标端执行：
    ```bash
-   scripts/init-skill.sh <skill-name> <target-dir>
+   scripts/init-skill.sh <skill-name> <target-ide> [location] [project-dir]
    ```
+   - `<target-ide>`：`cc` / `cursor` / `codex`
+   - 按端产出对应骨架（Claude Code → `SKILL.md` + 子目录；Cursor → `<name>.mdc`；Codex → `<name>.toml`）
 
 5. **起草内容** - 填充：
    - SKILL.md：精简指令
@@ -66,12 +83,13 @@ description: 创建符合规范的用户技能，包含完整结构、渐进式�
 
 ## 技能存放位置
 
-推荐目录：
+按目标端推荐目录：
 
-| 位置 | 说明 |
-|------|------|
-| `~/.claude/skills/` | 用户全局技能（推荐） |
-| `<project>/.claude/skills/` | 项目级技能 |
+| 端 | 全局 | 项目级 | 产物格式 |
+|----|------|--------|---------|
+| Claude Code | `~/.claude/skills/<name>/` | `<project>/.claude/skills/<name>/` | `SKILL.md` |
+| Cursor | — | `<project>/.cursor/rules/` | `<name>.mdc`（降级为 rule） |
+| Codex | `~/.codex/agents/` | `<project>/.codex/agents/` | `<name>.toml`（agent 形式） |
 
 ## 技能结构
 
@@ -85,6 +103,16 @@ skill-name/
 └── scripts/           # 工具脚本目录（按需）
     └── helper.*       # bash/py/ts
 ```
+
+### 三端结构差异
+
+| 端 | 结构 | 说明 |
+|----|------|------|
+| Claude Code | `<name>/SKILL.md` + `reference/` + `examples/` + `scripts/` | 目录形式，多文件 |
+| Cursor | `<name>.mdc` 单文件 | frontmatter（description/globs/alwaysApply）+ 正文；无子目录 |
+| Codex | `<name>.toml` 单文件 | name/description/developer_instructions + 可选 sandbox_mode；无子目录 |
+
+`reference/` / `examples/` / `scripts/` 仅 Claude Code 适用。Cursor / Codex 把详细内容内联到单文件正文。
 
 ## 示例
 

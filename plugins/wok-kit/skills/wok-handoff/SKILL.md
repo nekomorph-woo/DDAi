@@ -9,6 +9,8 @@ description: 将当前对话摘要为交接文档，供下一个 session 接续�
 
 ## 命令接口
 
+Claude Code 下用 `/wok-handoff` slash 触发；Cursor / Codex 无 slash 机制，直接调用 wok-handoff skill / agent。
+
 ```
 /wok-handoff [下一轮焦点描述]
 ```
