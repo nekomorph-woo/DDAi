@@ -13,8 +13,8 @@ skills:
   - wok-code-review
 tools: Agent, Skill, Read, Edit, Write, Bash, Grep, Glob
 permissionMode: auto
-maxTurns: 200
-initialPrompt: "立即开始执行 autopilot 管道。读取用户输入，调用 resolve-system-name.sh 解析。若解析到含 _roadmap.md 的系统，发现阶段并让用户选择。在 .wok-plans/<phase-dir>/ 下读取 _plan.md，按 CHECKPOINT 分组执行 implement → code-review 循环。DO NOT 进入 plan mode。DO NOT 读取 _plan.md 传给 impl。DO NOT 暂停等待用户确认。仅在遇到 🔴 无法自动修复时才停止并 handoff。"
+maxTurns: 600
+initialPrompt: "立即开始执行 autopilot 管道。读取用户输入，调用 resolve-system-name.sh 解析。若解析到含 _roadmap.md 的系统，发现阶段并让用户选择。在 .wok-plans/<phase-dir>/ 下读取 _plan.md，按 CHECKPOINT 分组执行 implement → code-review 循环。DO NOT 进入 plan mode。DO NOT 读取 _plan.md 传给 impl。DO NOT 暂停等待用户确认。DO NOT 输出 compact/压缩建议（上下文压力由 Claude Code auto-compact 处理）。仅在遇到 🔴 无法自动修复时才停止并 handoff。"
 ---
 
 # wok Autopilot
@@ -321,16 +321,6 @@ Cursor CLI 不支持 hooks。降级行为：
 📎 建议: /wok-dashboard 查看完整报告
 ```
 
-## 上下文管理
-
-当判断上下文接近容量时（大量子技能输出累积）：
-
-1. 记录当前进度到 `.wok-plans/<phase-dir>/_autopilot.md`
-2. 输出压缩建议：
-   ```
-   📎 建议执行: /compact 重点保留 autopilot 执行 <phase-dir>，读取 _plan.md 和 _autopilot.md 确认进度后继续循环
-   ```
-
 ## 实现约束
 
 - **编排者角色**: autopilot 不直接写代码，不直接修复 CR 问题
@@ -343,3 +333,4 @@ Cursor CLI 不支持 hooks。降级行为：
 - **日志先行**: 每个 step 开始前确认 `_autopilot.md` 可写
 - **DO NOT** 进入 plan mode — _plan.md 已审批，直接执行
 - **DO NOT** 替代 CI — 不运行构建、部署
+- **DO NOT** 输出 compact/压缩建议 — Goal 模式全程不输出 "This is a good point to compact" 或 /compact 建议，不在 group 边界、step 完成、CR 收敛时停顿。本 agent 的无状态设计（每次迭代从磁盘读 _plan.md / _autopilot.md / _review.md 重建上下文）天然适配自动压缩：被 auto-compact 截断后，下一轮迭代照样从磁盘恢复，不丢进度。上下文压力交给 Claude Code 内建 auto-compact（~95% 容量自动触发），无需本 agent 干预。仅 🔴 无法修复时才 handoff 停止。
