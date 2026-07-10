@@ -12,17 +12,19 @@
 
 | 顺序 | Skill | 输出路径 | 输入摘要要点 |
 |:---:|---|---|---|
-| 1 | `wok-define` | `_define.md` | 问题、目标、设计锚点、验收标准 |
-| 2 | `wok-idea` | `_roadmap.md` | feature 列表、阶段划分 |
-| 3 | `wok-design` | `modules/<name>/{design.md, decisions.md}` | 接口契约、设计决策 |
-| 4 | `wok-design-review`（可选） | `_check.md` | 跨模块一致性检查；无冲突可省略 |
+| 1 | `wok-prd` | `_prd.md` | 讨论结论结构化 / 外部 PRD 转换 |
+| 2 | `wok-idea` | `_roadmap.md` | feature 列表、阶段划分（消费 `_prd.md`） |
+| 3 | `wok-define` | `_define.md` | 问题、目标、设计锚点、验收标准 |
+| 4 | `wok-design` | `modules/<name>/{design.md, decisions.md}` | 接口契约、设计决策 |
+| 5 | `wok-design-review`（可选） | `_check.md` | 跨模块一致性检查；无冲突可省略 |
 
 ## feat-s-（小功能）
 
 | 顺序 | Skill | 输出路径 | 输入摘要要点 |
 |:---:|---|---|---|
-| 1 | `wok-define` | `_define.md` | 问题、目标、设计锚点、验收标准 |
-| 2 | `wok-design`（可选） | `modules/<name>/{design.md, decisions.md}` | 接口契约、设计决策 |
+| 1 | `wok-prd` | `_prd.md` | 讨论结论结构化 / 外部 PRD 转换 |
+| 2 | `wok-define` | `_define.md` | 问题、目标、设计锚点、验收标准 |
+| 3 | `wok-design`（可选） | `modules/<name>/{design.md, decisions.md}` | 接口契约、设计决策 |
 
 ## fix-（问题修复）
 

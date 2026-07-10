@@ -99,7 +99,7 @@ wok-idea 是 `feat-`（大功能）管道的入口。生成的 system-name 使�
 | 风险可控 | 每个阶段的复杂度均衡 |
 | 依赖排序 | 有前置依赖的排在后面 |
 
-**phase 粒度约束**：每个 phase 控制在 1-3 个模块，确保下游管道（wok-define → wok-execute）单次产出在人类可审阅范围内。
+**phase 粒度约束**：每个 phase 控制在 1-3 个模块，确保下游管道（wok-define → wok-execute）单次产出在人类可审阅范围内。**每个 phase 必须是从接口到数据的垂直切片（tracer bullet，纵向切片），DO NOT 横切**（如"先做所有接口，再做所有数据"），与 wok-execute 的 tracer bullet 措辞对齐。
 
 | 指标 | 控制目标 |
 |------|----------|
@@ -130,6 +130,7 @@ Phase 2: wok-define（已知 Phase 1 约束）→ wok-design（adaptive: true）
 - **wok-findings** 仅在 Phase 1 首次执行（探索代码库现状）
 - **后续 phase** 的 wok-design 使用 adaptive 模式，基于已有代码库和设计存量做增量设计
 - 每个 phase 的 wok-design-review 交叉验证仅覆盖该 phase 的模块，复杂度可控
+- 多阶段系统可用 wok-odyssey 自动编排各 phase 的设计与执行（整体设计区 + 连续执行区），无需手动逐 phase 调用下游 SKILL
 
 ## 约束
 
