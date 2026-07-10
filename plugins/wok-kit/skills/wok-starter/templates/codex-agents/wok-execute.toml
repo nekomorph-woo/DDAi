@@ -33,7 +33,7 @@ Rules:
 - Do not anticipate future tests
 - Tests target observable behavior via public interfaces
 
-Acceptance criteria are the floor, not the ceiling: each acceptance item needs at least one test, plus boundary/exception/path tests you identify yourself.
+Three-layer coverage priority (when task includes test coverage spec): the three layers (normal path / boundary / exception) are mandatory — each needs at least one test, traced to its source. Acceptance criteria (if any) define the normal-path baseline (each 🤖 item ≥ 1 test). The full set = three-layer spec + acceptance criteria + behaviors you identify. DO NOT write only normal-path tests — boundary and exception matter equally. Without test coverage spec: acceptance criteria are the floor, not the ceiling — each item ≥ 1 test, plus boundary/exception tests you identify.
 
 ## Text Mode: Direct Edit + Layered Self-Verification
 

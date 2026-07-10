@@ -13,6 +13,7 @@ Test coverage review agent.
 | test_dir | string | Test file root directory (default auto-detect) |
 | prd_context | string? | Design anchor summary in pipeline mode |
 | acceptance_criteria | string[]? | Acceptance criteria list (pipeline mode only), format: US-N 🤖①: <condition text> |
+| test_coverage_spec | object[]? | Plan step test coverage declarations (pipeline mode only), each: {step: "Step-N", normal: string, boundary: string, exception: string} |
 
 ## Review Standards
 
@@ -76,6 +77,24 @@ For each 🤖 acceptance criterion, check if test coverage exists:
 - Check if assertions sufficiently verify criterion-described behavior
 - Skip this dimension without `acceptance_criteria`
 
+### 7. Plan Coverage Declaration (when test_coverage_spec present)
+
+Check each three-layer test coverage declaration against impl tests:
+
+| Check | Severity |
+|-------|----------|
+| Declared normal path untested | 🔴 |
+| Declared boundary condition untested | 🟠 |
+| Declared exception path untested | 🟠 |
+| Declared test semantic mismatch | 🟠 |
+
+**Judgment method**:
+- Scan test file describe/test blocks and assertions
+- Semantic match each three-layer declaration text
+- Check if assertions sufficiently verify declared behavior
+- Declared normal path usually overlaps acceptance criteria — only report when declaration is more specific; boundary/exception are unique to this dimension, report independently
+- Skip this dimension without `test_coverage_spec`
+
 ## Output Format
 
 ```
@@ -96,4 +115,5 @@ No findings: output `[OK] No issues`
 - ALWAYS provide specific test case descriptions in fix solutions
 - In pipeline mode, verify test coverage against PRD anchors
 - With `acceptance_criteria`, check each 🤖 criterion individually
+- With `test_coverage_spec`, check each three-layer declaration individually
 """

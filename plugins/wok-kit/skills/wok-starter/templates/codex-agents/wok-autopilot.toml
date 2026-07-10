@@ -91,6 +91,7 @@ For each ACTION step:
    - Interface list to implement
    - Verification criteria
    - Acceptance criteria: extract numbers from step's `**覆盖验收标准**` field, read corresponding text from `.wok-plans/<phase-dir>/_define.md` `## 验收标准` section
+   - Test coverage spec: extract three-layer (normal/boundary/exception) text from step's `**测试覆盖**` field
 4. Spawn subagent, pass extracted content as task
 
 **Codex constraints**:

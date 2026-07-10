@@ -64,8 +64,9 @@ pipeline:
 4. 过滤非代码文件（图片、二进制、lock 文件等）
 5. 若无变更文件 → 输出"无变更可审查"并退出
 6. **提取验收标准**（仅管道模式）：读取 `_define.md` 或 `_issue.md` 的 `## 验收标准` section，提取所有 🤖 条目的编号和文字 → `acceptance_criteria` 列表。元素格式：`US-N 🤖M: <条件文字>`（M 为带圈数字，不含 checkbox 前缀）
+7. **提取测试覆盖声明**（仅管道模式）：读取 `_plan.md`，提取本次审查范围内所有 ACTION step 的 `**测试覆盖**` 字段（保守策略：取 CHECKPOINT group 内全部 ACTION step，不按 diff 文件精确关联，避免漏报）。每个 step 解析为 `{step: "Step-N", 正常路径: <文字>, 边界条件: <文字>, 异常路径: <文字>}` → `test_coverage_spec` 列表。提取正则锚 `- \*\*测试覆盖\*\*：` 后续三个子 bullet（正常路径/边界条件/异常路径）。step 无此字段或非 ACTION → 跳过
 
-**产出**：上下文包（含 files 列表、language、design_anchors、prd_summary、phase_dir、acceptance_criteria）
+**产出**：上下文包（含 files 列表、language、design_anchors、prd_summary、phase_dir、acceptance_criteria、test_coverage_spec）
 
 ### Stage 1: 并行审查
 
@@ -79,7 +80,7 @@ pipeline:
 | comment-analyzer | 表格格式（files + diff + phase-context） |
 | silent-failure-hunter | 表格格式（files + context + language） |
 | type-design-analyzer | 表格格式（files + context） |
-| pr-test-analyzer | 表格格式（scope_files + test_dir + prd_context + acceptance_criteria） |
+| pr-test-analyzer | 表格格式（scope_files + test_dir + prd_context + acceptance_criteria + test_coverage_spec） |
 
 **构建规则**：
 

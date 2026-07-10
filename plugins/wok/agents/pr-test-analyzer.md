@@ -18,6 +18,7 @@ model: opus
 | `test_dir` | `string` | 测试文件根目录（默认自动检测） |
 | `prd_context` | `string?` | 管道模式下的 PRD 设计锚点摘要 |
 | `acceptance_criteria` | `string[]?` | 🤖 验收标准列表（仅管道模式），格式：`US-N 🤖①: <条件文字>`（M 为带圈数字 ①②③...） |
+| `test_coverage_spec` | `object[]?` | plan step 测试覆盖声明（仅管道模式），每项结构：`{step: "Step-N", 正常路径: string, 边界条件: string, 异常路径: string}` |
 
 ## 审查标准清单
 
@@ -81,6 +82,24 @@ model: opus
 - 检查断言是否充分验证了验收标准描述的行为
 - 无 `acceptance_criteria` 时跳过此维度
 
+### 7. plan 覆盖声明核对（有 test_coverage_spec 输入时）
+
+对照 plan step 声明的三层测试覆盖，逐条检查 impl 是否写了对应测试：
+
+| 检查项 | 严重度 |
+|--------|--------|
+| 声明的正常路径无对应测试 | 🔴 |
+| 声明的边界条件无对应测试 | 🟠 |
+| 声明的异常路径无对应测试 | 🟠 |
+| 声明测试与描述偏离（语义不匹配） | 🟠 |
+
+**判断方法**：
+- 扫描测试文件的 describe/test 块文本和断言内容
+- 与 test_coverage_spec 三层文字逐条语义匹配
+- 检查断言是否充分验证了声明描述的行为
+- 声明的正常路径通常与验收标准重叠，仅当声明比验收标准更具体时才报；边界/异常路径是本维度独有，独立报
+- 无 `test_coverage_spec` 时跳过此维度
+
 ## 输出格式
 
 ```
@@ -101,3 +120,4 @@ model: opus
 - ALWAYS 在修复方案中给出具体测试用例描述
 - 管道模式下对照 PRD 锚点验证测试覆盖
 - 有 `acceptance_criteria` 时，逐条检查每个 🤖 验收标准的测试覆盖情况
+- 有 `test_coverage_spec` 时，逐条检查三层声明的测试覆盖情况
