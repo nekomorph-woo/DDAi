@@ -2,6 +2,8 @@
 
 `_review.md` 单文件管理规范。内部模块，由 review-engine Stage 4 调用。
 
+> **📝 文风要求**：报告里每条 finding 的 title / 原因 / 修复方案都必须是完整句子，遵循 `finding-format.md` 的文风规范（有主语、有动作，不写电报体）。术语（Converged、Blocking、Severe、Advisory 等）含义见下方"状态标记"。
+
 ## 输入数据结构
 
 ```yaml
@@ -61,9 +63,9 @@ simplify_count: <positive-int>
 
 ### Open
 
-- [🔴] src/auth.py:42 — JWT 过期未校验
-  原因: token 过期后仍接受请求
-  修复方案: 添加 exp 字段校验
+- [🔴] src/auth.py:42 — 登录接口未校验 JWT 过期时间
+  原因: 当前代码在 token 过期后仍然接受请求，没有检查 JWT 的 exp（过期）字段，导致过期 token 仍可访问受保护资源。
+  修复方案: 在 auth middleware 的校验逻辑中加入 exp 字段检查，过期则返回 401。
   来源: code-reviewer
 
   <details>
@@ -131,6 +133,11 @@ simplify_count: <positive-int>
 ```
 
 ## 状态标记
+
+**严重度术语**（finding 的 🔴🟠🟡 对应分级）：
+- **Blocking（阻塞级，🔴）**：会导致功能中断、数据丢失或安全漏洞，必须修复才能继续
+- **Severe（严重级，🟠）**：影响功能但有临时规避路径，应尽快修复
+- **Advisory（建议级，🟡）**：代码质量或可维护性建议，不阻塞，按需采纳
 
 | 标记 | 含义 | 触发条件 |
 |------|------|----------|

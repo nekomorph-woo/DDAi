@@ -13,6 +13,8 @@ pipeline:
 
 扫描所有项目近 7 日 Claude Code 会话日志，提取行为模式，生成用户级和项目级规则文件。
 
+**术语**："洞见"指从会话记录里归纳出的、反复出现的行为模式（如"总用 ASCII 图代替流程图"）；"维度"是观察行为的角度（编码风格、工程实践、沟通偏好等 7 个）。
+
 ## 步骤 1：清洗数据
 
 ```bash
@@ -34,6 +36,8 @@ python3 scripts/clean-sessions.py --days 7
 
 ## 步骤 2：7 维度并行分析
 
+> **📝 文风要求**：分析报告用完整句子描述发现的模式（不写电报体）；最终 rules 文件保持命令式短句（rules 的固有风格）。完整规范见 `skills/_shared/doc-writing-style.md`。
+
 使用 Agent 工具并行启动 7 个子任务，每个子任务负责一个维度：
 
 | 维度 | reference 文件 | Grep 搜索重点 |
@@ -46,7 +50,7 @@ python3 scripts/clean-sessions.py --days 7
 | cognition | reference/cognition.md | `is_correction:true` 与 `human_input` 总量比值；`ai_tool_call` 工具分布 |
 | correction | reference/correction.md | `is_correction:true` 的 human_input 上下文；`is_error:true` 的 tool_result |
 
-每个子任务的指令模板：
+每个子任务的指令模板（分析报告用完整句子描述发现的模式，不写电报体；最终 rules 文件保持命令式短句）：
 
 ```
 分析清洗后的会话 JSONL 文件（{jsonl_path}）中的 {维度} 维度。

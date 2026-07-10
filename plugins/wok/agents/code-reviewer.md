@@ -105,6 +105,8 @@ CLAUDE.md 合规审查 + bug 检测 agent。
 
 ## 输出格式
 
+> **📝 文风**：`原因` 和 `修复方案` 必须是完整句子（有主语、有动作），不写电报体。详见 `skills/wok-code-review/reference/finding-format.md`。
+
 标准化 finding 列表，每条 finding 严格遵循：
 
 ```
