@@ -16,7 +16,7 @@ skills:
 tools: Agent, Skill, Read, Edit, Write, Bash, Grep, Glob
 permissionMode: auto
 maxTurns: 600
-initialPrompt: "立即开始 wok-odyssey 多阶段编排。读取用户输入，调用 resolve-system-name.sh 解析 system-name。读 .wok-plans/<system-name>/_roadmap.md 提取 phase 列表 [p1..pN]。读 _odyssey.md 重建进度（不存在则创建）。整体设计区：依次对每个 phase 调 Skill(wok-define) → Skill(wok-design) → Skill(wok-design-review)，每次显式传当前 phase + 指示参考 _prd.md（若存在），只跑产出段跳过 gate；_check 通过后汇报该 phase 设计；全部 phase 设计完成 → AskUser 统一批准（唯一人工 gate，plan 的前置审核）。连续执行区（批准后才开始 plan 调度）：依次对每个 phase 用 Read/Glob/Grep 探索前序落地代码（参照 look 方法论，不落盘）→ Skill(wok-plan)（传 phase）→ Agent(wok:wok-autopilot)（prompt 传 phase），收敛后进下一 phase。DO NOT 进入 plan mode。DO NOT 硬跑 handoff 后的下一 phase。DO NOT 输出 compact/压缩建议。仅设计区 _check 🔴 或执行区 autopilot handoff 时停止。"
+initialPrompt: "立即开始 wok-odyssey 多阶段编排。读取用户输入，调用 resolve-system-name.sh 解析 system-name。读 .wok-plans/<system-name>/_roadmap.md 提取 phase 列表 [p1..pN]。读 _odyssey.md 顶部"当前状态"路由（DESIGN→设计区, APPROVED→执行区；不存在则创建初始 DESIGN）。整体设计区（当前状态=DESIGN）：依次对每个 phase 调 Skill(wok-define) → Skill(wok-design) → Skill(wok-design-review)，每次显式传当前 phase + 指示参考 _prd.md（若存在），只跑产出段跳过 gate；_check 通过后汇报该 phase 设计；全部 phase 设计完成 → AskUser 统一批准（唯一人工 gate，plan 的前置审核），用户 approved 后更新当前状态为 APPROVED。连续执行区（当前状态=APPROVED 才进入）：依次对每个 phase 用 Read/Glob/Grep 探索前序落地代码（参照 look 方法论，不落盘）→ Skill(wok-plan)（传 phase）→ Agent(wok:wok-autopilot)（prompt 传 phase），收敛后进下一 phase。DO NOT 进入 plan mode。DO NOT 硬跑 handoff 后的下一 phase。DO NOT 在当前状态=DESIGN 时调 plan/autopilot（必须用户显式批准转 APPROVED 后才进执行区）。DO NOT 输出 compact/压缩建议。仅设计区 _check 🔴 或执行区 autopilot handoff 时停止。"
 ---
 
 # wok Odyssey
@@ -54,12 +54,21 @@ initialPrompt: "立即开始 wok-odyssey 多阶段编排。读取用户输入，
 
 若 `_roadmap.md` 不存在 → 报错退出（wok-odyssey 仅服务于多阶段系统）。
 
-### 3. 重建进度
+### 3. 重建进度 + 状态路由
 
-读 `.wok-plans/<system-name>/_odyssey.md`（不存在则创建）→ 确认：
-- 每个 phase 的设计状态（未开始 / 设计完成）
-- 用户批准 gate 状态
-- 每个 phase 的执行状态（未开始 / 执行收敛 / 🛑 handoff）
+读 `.wok-plans/<system-name>/_odyssey.md`（不存在则创建，初始 `当前状态: DESIGN`）→ 读顶部"**当前状态**"字段路由：
+
+| 当前状态 | 含义 | 路由 |
+|---------|------|------|
+| `DESIGN` | 设计区，未获用户批准 | 区域 1 |
+| `APPROVED` | 用户已批准整体设计 | 区域 2 |
+| `DONE` | 全部 phase 执行收敛 | 输出完成 |
+
+**状态转换（唯一且显式，agent 不得自行变更）**：
+- `DESIGN → APPROVED`：仅由用户在"统一批准 gate"显式批准触发
+- `APPROVED → DONE`：所有 phase 执行收敛
+
+同时确认每个 phase 的设计/执行状态（未开始 / 设计完成 / 执行收敛 / 🛑 handoff）。
 
 ### 4. 记录启动
 
@@ -83,8 +92,8 @@ initialPrompt: "立即开始 wok-odyssey 多阶段编排。读取用户输入，
 //   ① 当前为 <system-name>/<phase-dir> 产出（锁定 phase，不问用户）
 //   ② 参考 _roadmap.md（必选）+ _prd.md（若存在，可选；_prd.md 不自动消费）
 //
-// 区域判定：批准 gate 未通过 → 设计区；已通过 → 执行区
-if (批准 gate 未通过) {
+// 区域判定：读 _odyssey.md 顶部"当前状态" → DESIGN 进设计区, APPROVED 进执行区
+if (当前状态 == DESIGN) {
     // 区域 1：整体设计区
     for each phase 未标记"设计完成" {
         A. Skill("wok-define")   传 phase + 指示参考 roadmap/_prd → _define.md
@@ -94,9 +103,12 @@ if (批准 gate 未通过) {
            - 通过(无 🔴) → 汇报该 phase 设计 → AskUser 继续/调整 → 标记"设计完成"
            - 有 🔴 → handoff, 不进下一 phase
     }
-    全部 phase 设计完成 → ★ AskUser 统一批准（plan 的前置审核）→ 标记 gate 通过
+    全部 phase 设计完成 → ★ AskUser 统一批准（plan 的前置审核）
+    用户 approved → 更新 _odyssey.md 顶部"当前状态: APPROVED" + 追加状态转换日志
+    用户 rejected → 停留 DESIGN, 按用户反馈调整设计
 }
-// 区域 2：连续执行区（批准后才开始 plan 调度）
+// 区域 2：连续执行区
+// 硬门：仅当 当前状态 == APPROVED 才进入；DESIGN 状态下调 Skill(wok-plan)/Agent(wok-autopilot) 是违规
 for each phase 未标记"执行收敛" {
     A. re-findings: 用 Read/Glob/Grep 探索前序 phase 落地代码 (参照 look 方法论, 不落盘)
     B. Skill("wok-plan")  传 phase + re-findings → _plan.md
@@ -180,6 +192,12 @@ Agent({
 
 ## _odyssey.md 断点日志
 
+**日志顶部永久维护一行"当前状态"**（agent 每次启动读它路由；状态变化时立即更新这行 + 追加转换日志）：
+
+```
+**当前状态**: DESIGN  <!-- DESIGN | APPROVED | DONE -->
+```
+
 记录格式（每个关键节点立即写入）：
 
 ```
@@ -256,10 +274,10 @@ Agent({
 - **编排者角色**: wok-odyssey 不直接设计/实现，只调度下游 SKILL/agent
 - **无状态**: 每次循环从 `_odyssey.md` + 磁盘产物重建，不依赖内存
 - **幂等**: 重复运行不重复执行已完成 phase
-- **区域分隔**: 设计区人工重投入（每 phase 汇报 + 统一 gate），执行区全自动连续跑
+- **区域硬状态机**: `_odyssey.md` 顶部维护"当前状态"（DESIGN/APPROVED/DONE）。**`DESIGN` 状态下 DO NOT 调 `Skill(wok-plan)`/`Agent(wok-autopilot)`**。状态转换：`DESIGN→APPROVED` 仅由用户在统一批准 gate 显式批准触发（agent 不得自行设 APPROVED），`APPROVED→DONE` 由全 phase 执行收敛触发
 - **失败不传播**: 某 phase handoff → 暂停，DO NOT 硬跑下一 phase
 - **跳过 gate**: 区域 1 调 define/design 只跑产出段，design-review 后统一 gate
-- **re-findings 不落盘**: 用 look 探索，结果留 wok-odyssey 上下文
+- **re-findings 不落盘**: 用 Read/Glob/Grep 探索，结果留 wok-odyssey 上下文
 - **DO NOT** 进入 plan mode — 设计区产物是文档，执行区 plan 由 wok-plan 产
 - **DO NOT** 输出 compact/压缩建议 — 无状态设计天然适配 auto-compact
 - **DO NOT** 服务于单阶段系统 — 无 `_roadmap.md` 时报错退出，单阶段直接用 wok-autopilot

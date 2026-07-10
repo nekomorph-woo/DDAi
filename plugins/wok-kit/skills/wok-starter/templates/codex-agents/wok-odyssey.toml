@@ -33,12 +33,19 @@ Read `.wok-plans/<system-name>/_roadmap.md` → extract phase list `[p1-xxx, p2-
 
 If `_roadmap.md` doesn't exist → error exit (wok-odyssey only serves multi-phase systems).
 
-### 3. Rebuild Progress
+### 3. Rebuild Progress + State Routing
 
-Read `.wok-plans/<system-name>/_odyssey.md` (create if missing) → confirm:
-- Each phase's design status (not started / design done)
-- User approval gate status
-- Each phase's execution status (not started / execution converged / 🛑 handoff)
+Read `.wok-plans/<system-name>/_odyssey.md` (create if missing, initial `当前状态: DESIGN`) → read top "当前状态" field to route:
+
+| 当前状态 | meaning | route |
+|---------|---------|-------|
+| `DESIGN` | design zone, not yet user-approved | Zone 1 |
+| `APPROVED` | user approved holistic design | Zone 2 |
+| `DONE` | all phases execution converged | output completion |
+
+**State transitions (explicit, agent must NOT self-change)**: `DESIGN→APPROVED` only by user's explicit approval at unified gate; `APPROVED→DONE` by all phases converged.
+
+Also confirm each phase's design/execution status (not started / design done / execution converged / 🛑 handoff).
 
 ### 4. Record Startup
 
@@ -57,9 +64,16 @@ Each iteration rebuilds progress from `_odyssey.md`, doesn't rely on memory.
 
 **Critical: Write log to `_odyssey.md` immediately after each substep, DO NOT batch write at end.**
 
-Main loop structure (zone decided by approval gate):
-- If approval gate not passed → Design Zone
-- If approval gate passed → Execution Zone
+Main loop structure (decided by `当前状态` field at top of `_odyssey.md`):
+- `当前状态: DESIGN` → Design Zone (region 1)
+- `当前状态: APPROVED` → Execution Zone (region 2)
+- `当前状态: DONE` → output completion summary
+
+**State transitions (explicit, agent must NOT self-change)**:
+- `DESIGN → APPROVED`: only triggered by user's explicit approval at unified approval gate
+- `APPROVED → DONE`: all phases execution converged
+
+**Hard constraint**: when `当前状态 == DESIGN`, DO NOT call `Skill(wok-plan)` / `Agent(wok-autopilot)`.
 
 ### Phase Context & Upstream References (critical)
 
@@ -80,11 +94,13 @@ For each phase not marked "design done" (pass phase + upstream references each c
       - Pass (no 🔴 blocking) → report phase design summary → AskUser continue/adjust → mark "design done"
       - Has 🔴 → handoff, don't proceed to next phase
 
-All phases design done → ★ AskUser unified approval (prerequisite review before plan) → mark gate passed. **DO NOT** jump to plan before all phases' design (define+design+review) complete — plan is an action after holistic design approval.
+All phases design done → ★ AskUser unified approval (prerequisite review before plan). User approves → update `_odyssey.md` top `当前状态: APPROVED` + append transition log. User rejects → stay DESIGN, adjust per feedback. **DO NOT** jump to plan before all phases' design complete AND status becomes APPROVED.
 
 **Skip gate**: Calling define/design executes only "output segment", skipping their gates (reuse wok-intake main agent pattern: "execute downstream skill's output document segment only, no verification gate"). wok-odyssey unifies report + approval after design-review.
 
 ### Zone 2: Sequential Execution Zone (fully automatic)
+
+**Hard gate**: only enter when `当前状态 == APPROVED`. Calling `Skill(wok-plan)` / `Agent(wok-autopilot)` under DESIGN status is a violation.
 
 For each phase not marked "execution converged" (pass phase each call):
    A. re-findings: use Read/Glob/Grep to explore prior phases' landed code
