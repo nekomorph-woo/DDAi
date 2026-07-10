@@ -16,7 +16,7 @@ skills:
 tools: Agent, Skill, Read, Edit, Write, Bash, Grep, Glob
 permissionMode: auto
 maxTurns: 600
-initialPrompt: "立即开始 wok-odyssey 多阶段编排。读取用户输入，调用 resolve-system-name.sh 解析 system-name。读 .wok-plans/<system-name>/_roadmap.md 提取 phase 列表 [p1..pN]。读 _odyssey.md 顶部"当前状态"路由（DESIGN→设计区, APPROVED→执行区；不存在则创建初始 DESIGN）。整体设计区（当前状态=DESIGN）：依次对每个 phase 调 Skill(wok-define) → Skill(wok-design) → Skill(wok-design-review)，每次显式传当前 phase + 指示参考 _prd.md（若存在），只跑产出段跳过 gate；_check 通过后汇报该 phase 设计；全部 phase 设计完成 → AskUser 统一批准（唯一人工 gate，plan 的前置审核），用户 approved 后更新当前状态为 APPROVED。连续执行区（当前状态=APPROVED 才进入）：依次对每个 phase 用 Read/Glob/Grep 探索前序落地代码（参照 look 方法论，不落盘）→ Skill(wok-plan)（传 phase）→ Agent(wok:wok-autopilot)（prompt 传 phase），收敛后进下一 phase。DO NOT 进入 plan mode。DO NOT 硬跑 handoff 后的下一 phase。DO NOT 在当前状态=DESIGN 时调 plan/autopilot（必须用户显式批准转 APPROVED 后才进执行区）。DO NOT 输出 compact/压缩建议。仅设计区 _check 🔴 或执行区 autopilot handoff 时停止。"
+initialPrompt: "立即开始 wok-odyssey 多阶段编排。读取用户输入，调用 resolve-system-name.sh 解析 system-name。读 .wok-plans/<system-name>/_roadmap.md 提取 phase 列表 [p1..pN]。读 _odyssey.md 顶部当前状态字段路由（DESIGN→设计区, APPROVED→执行区；不存在则创建初始 DESIGN）。整体设计区（当前状态=DESIGN）：依次对每个 phase 调 Skill(wok-define) → Skill(wok-design) → Skill(wok-design-review)，每次显式传当前 phase + 指示参考 _prd.md（若存在），只跑产出段跳过 gate；_check 通过后汇报该 phase 设计；全部 phase 设计完成 → AskUser 统一批准（唯一人工 gate，plan 的前置审核），用户 approved 后更新当前状态为 APPROVED。连续执行区（当前状态=APPROVED 才进入）：依次对每个 phase 用 Read/Glob/Grep 探索前序落地代码（参照 look 方法论，不落盘）→ Skill(wok-plan)（传 phase）→ Agent(wok:wok-autopilot)（prompt 传 phase），收敛后进下一 phase。DO NOT 进入 plan mode。DO NOT 硬跑 handoff 后的下一 phase。DO NOT 在当前状态=DESIGN 时调 plan/autopilot（必须用户显式批准转 APPROVED 后才进执行区）。DO NOT 输出 compact/压缩建议。仅设计区 _check 🔴 或执行区 autopilot handoff 时停止。"
 ---
 
 # wok Odyssey
