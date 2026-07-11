@@ -147,6 +147,20 @@
     </div>
   </div>
 
+  <div id="link-modal-overlay" class="help-overlay" style="display:none">
+    <div class="help-modal link-modal">
+      <div class="help-modal-header">
+        <span id="link-modal-title">引用文档</span>
+        <span>
+          <button class="link-modal-tag-btn" id="link-modal-back" title="返回上一个">← 返回</button>
+          <button class="link-modal-tag-btn" id="link-modal-open" title="在新标签页打开">新页打开 ↗</button>
+          <button class="help-close-btn" id="link-modal-close">&times;</button>
+        </span>
+      </div>
+      <div class="help-modal-body" id="link-modal-body"></div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
   <script>window.markdownit || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js"><\/script>');</script>
   <script src="_render.js"></script>

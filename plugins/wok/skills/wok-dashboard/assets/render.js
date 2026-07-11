@@ -3788,6 +3788,141 @@
     return div.innerHTML;
   }
 
+  // ── Link Modal（md/http 链接弹窗：md 渲染 / http iframe 原生展示）──
+  // 浏览器用 dashboard.html 的 URL 作相对链接基准，导致 md 里的 ../xxx 链接 404；
+  // 这里拦截点击，用 data-source-file 恢复源文档路径再解析，弹窗展示。
+  let linkModalCurrent = null;
+  let linkHistory = [];       // md 模式历史栈 [{target, title, anchor}]（iframe 用 iframe 自己 history）
+  let linkModalMode = null;   // 当前模式（返回按钮分流用）
+
+  function resolveRefPath(sourceFile, href) {
+    const dir = sourceFile.slice(0, sourceFile.lastIndexOf('/'));
+    const clean = href.split('#')[0];
+    try {
+      return new URL(clean, 'http://x/' + dir + '/').pathname.slice(1);
+    } catch {
+      return clean;
+    }
+  }
+
+  function closeLinkModal() {
+    const o = document.getElementById('link-modal-overlay');
+    if (!o) return;
+    o.style.display = 'none';
+    // 不清 body：保留 iframe 元素及其内部 history，下次 openLinkModal 复用（返回按钮可 back）
+    linkModalCurrent = null;
+    linkHistory = [];       // 关弹窗清 md 历史栈
+    linkModalMode = null;
+  }
+
+  async function openLinkModal(target, title, mode, anchor, isBack) {
+    const o = document.getElementById('link-modal-overlay');
+    const body = document.getElementById('link-modal-body');
+    if (!o || !body) return;
+    linkModalCurrent = target;
+    linkModalMode = mode;
+    const titleEl = document.getElementById('link-modal-title');
+    if (titleEl) titleEl.textContent = title || target;
+    const isIframe = (mode === 'iframe');
+    // md 模式维护历史栈（返回按钮据此显示）；iframe 用 iframe 自己 history
+    if (!isIframe && !isBack) linkHistory.push({ target, title, anchor });
+    // 「新页打开」仅 iframe；「← 返回」iframe 总显示，md 栈长 > 1 才显示
+    const openBtn = document.getElementById('link-modal-open');
+    if (openBtn) openBtn.style.display = isIframe ? '' : 'none';
+    const backBtn = document.getElementById('link-modal-back');
+    if (backBtn) backBtn.style.display = isIframe ? '' : (linkHistory.length > 1 ? '' : 'none');
+    if (isIframe) {
+      // http 链接：iframe 原生展示。复用现有 iframe 保留内部 history（返回按钮可 back）
+      let f = body.querySelector('iframe.link-modal-iframe');
+      if (!f) {
+        body.className = 'help-modal-body';
+        body.innerHTML = '';
+        f = document.createElement('iframe');
+        f.className = 'link-modal-iframe';
+        f.sandbox = 'allow-scripts allow-same-origin allow-popups allow-forms';
+        f.referrerPolicy = 'no-referrer';
+        body.appendChild(f);
+      }
+      f.src = target;
+    } else {
+      // 相对链接：fetch + parseMarkdown + renderMd
+      body.className = 'help-modal-body';
+      body.innerHTML = '<p style="color:#737373;">加载中…</p>';
+      try {
+        const encoded = target.split('/').map(encodeURIComponent).join('/');
+        const resp = await wokFetch(FEATURE_BASE + '/' + encoded);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const raw = await resp.text();
+        const parsed = parseMarkdown(raw, target);
+        body.className = 'help-modal-body md-content';
+        body.innerHTML = renderMd(parsed.body, target, parsed.bodyOffset);
+        // 锚点跳转：渲染后滚到对应标题（markdown-it 默认不给标题加 id，遍历匹配 slug/文本）
+        if (anchor) {
+          let anc = anchor;
+          try { anc = decodeURIComponent(anchor); } catch (e) {}
+          requestAnimationFrame(() => {
+            const heads = body.querySelectorAll('h1,h2,h3,h4,h5,h6');
+            for (const h of heads) {
+              const slug = h.textContent.toLowerCase().trim().replace(/[^\w一-龥]+/g, '-').replace(/^-+|-+$/g, '');
+              if (slug === anc || h.textContent.trim() === anc) {
+                h.scrollIntoView({ block: 'start' });
+                break;
+              }
+            }
+          });
+        }
+      } catch (err) {
+        body.className = 'help-modal-body';
+        body.innerHTML = '<p style="color:#CC0000;">未找到文档：<code>' + esc(target) + '</code></p>';
+      }
+    }
+    o.style.display = 'flex';
+  }
+
+  function handleLinkClick(e) {
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || /^(mailto:|#)/.test(href)) return;  // mailto / 同页锚点放行
+    e.preventDefault();
+    if (/^https?:\/\//i.test(href)) {
+      openLinkModal(href, href, 'iframe');
+      return;
+    }
+    const sourceFile = a.closest('[data-source-file]')?.dataset.sourceFile || '';
+    if (!sourceFile) { window.open(href, '_blank', 'noopener'); return; }
+    const [rawPath, anchor] = href.split('#');
+    const resolved = resolveRefPath(sourceFile, rawPath);
+    openLinkModal(resolved, (a.textContent.trim() || resolved), 'md', anchor);
+  }
+
+  // 绑定（script 在 body 末尾，DOM 已 ready）
+  document.addEventListener('click', handleLinkClick);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLinkModal(); });
+  (function bindLinkModal() {
+    const linkOv = document.getElementById('link-modal-overlay');
+    if (linkOv) linkOv.addEventListener('click', (e) => { if (e.target === linkOv) closeLinkModal(); });
+    const linkClose = document.getElementById('link-modal-close');
+    if (linkClose) linkClose.addEventListener('click', closeLinkModal);
+    const linkOpen = document.getElementById('link-modal-open');
+    if (linkOpen) linkOpen.addEventListener('click', () => { if (linkModalCurrent) window.open(linkModalCurrent, '_blank', 'noopener'); });
+    const linkBack = document.getElementById('link-modal-back');
+    if (linkBack) linkBack.addEventListener('click', () => {
+      if (linkModalMode === 'iframe') {
+        // iframe 模式：用 iframe 内部 history
+        const f = document.querySelector('#link-modal-body iframe.link-modal-iframe');
+        if (f && f.contentWindow) { try { f.contentWindow.history.back(); } catch (e) {} }
+      } else {
+        // md 模式：pop 当前，重新打开前一个（isBack=true 不再 push）
+        if (linkHistory.length <= 1) { closeLinkModal(); return; }
+        linkHistory.pop();
+        const prev = linkHistory[linkHistory.length - 1];
+        if (prev) openLinkModal(prev.target, prev.title, 'md', prev.anchor, true);
+        else closeLinkModal();
+      }
+    });
+  })();
+
   // ── Init ──
   function init() {
     initMarkdown();

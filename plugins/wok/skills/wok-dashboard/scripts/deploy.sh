@@ -41,6 +41,10 @@ mkdir -p "$DASHBOARD_DIR"
 cp -f "$ASSETS_DIR/dashboard.html" "$SYSTEM_DIR/_dashboard.html"
 cp -f "$ASSETS_DIR/render.js" "$SYSTEM_DIR/_render.js"
 cp -f "$ASSETS_DIR/style.css" "$SYSTEM_DIR/_style.css"
+# _server.py 变化时强制重启 server（让新代码生效，避免浏览器拿到旧缓存策略）
+if [ -f "$SERVER_SCRIPT" ] && ! diff -q "$SCRIPT_DIR/_server.py" "$SERVER_SCRIPT" >/dev/null 2>&1; then
+    RESTART=true
+fi
 cp -f "$SCRIPT_DIR/_server.py" "$SERVER_SCRIPT"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
