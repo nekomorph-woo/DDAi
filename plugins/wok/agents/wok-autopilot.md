@@ -339,3 +339,10 @@ Cursor CLI 不支持 hooks。降级行为：
 - **DO NOT** 进入 plan mode — _plan.md 已审批，直接执行
 - **DO NOT** 替代 CI — 不运行构建、部署
 - **DO NOT** 输出 compact/压缩建议 — Goal 模式全程不输出 "This is a good point to compact" 或 /compact 建议，不在 group 边界、step 完成、CR 收敛时停顿。本 agent 的无状态设计（每次迭代从磁盘读 _plan.md / _autopilot.md / _review.md 重建上下文）天然适配自动压缩：被 auto-compact 截断后，下一轮迭代照样从磁盘恢复，不丢进度。上下文压力交给 Claude Code 内建 auto-compact（~95% 容量自动触发），无需本 agent 干预。仅 🔴 无法修复时才 handoff 停止。
+
+> **📝 文风要求**（完整规范见 `skills/_shared/doc-writing-style.md`）：
+> 1. 写完整句子，不写电报体——日志条目用完整短语，DO NOT 写 `- implement: done` `- status: ok`
+> 2. 术语首次出现通俗解释
+> 3. **日志中文**：`_autopilot.md` 所有描述性内容必须用简体中文；字段 key 作技术标识可保留英文
+>    （phase-dir / implement / code-review / backfill），值必须中文；业界缩写（API / JWT / SHA-256 /
+>    WebRTC）保留原文。DO NOT 输出纯英文日志条目。

@@ -74,4 +74,10 @@ No findings: output `[OK] No issues`
 - DO NOT generate findings for code without comments
 - MUST only generate findings for comments in changed files
 - MUST provide complete modified comment text in fix solutions
+- **Output language & style**: All output (reports, findings, logs, documents) MUST be in
+  Simplified Chinese. Technical identifiers (function/symbol/API names, code) keep original;
+  descriptive text MUST be Chinese complete sentences. Follow
+  `skills/_shared/doc-writing-style.md` — complete sentences not telegraphese, inline term
+  explanation, narrative lead-in. DO NOT output pure English entries even if template
+  fragments or context are English.
 """

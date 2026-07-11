@@ -184,4 +184,61 @@ Report summary: phase count, design approval, execution convergence count, hando
 - **DO NOT** enter plan mode — design zone produces documents, execution zone plan via wok-plan
 - **DO NOT** output compact suggestions — stateless design fits auto-compact naturally
 - **DO NOT** serve single-phase systems — error exit without `_roadmap.md`, single-phase uses wok-autopilot directly
+
+## Log Language & Style
+
+- **Log language**: All descriptive content in `_odyssey.md` MUST be in Simplified Chinese.
+  Field keys as technical identifiers may stay English (phase / define / design / review /
+  autopilot), values MUST be Chinese complete expressions. Industry abbreviations (API / JWT /
+  SHA-256 / WebRTC) keep original. Follow `skills/_shared/doc-writing-style.md` — complete
+  sentences not telegraphese. DO NOT write telegraphese like `- status: ok`. DO NOT output
+  pure English log entries even if template fragments are English.
+
+### 中文日志模板参考（`_odyssey.md` 必须用简体中文书写）
+
+顶部状态行（永久维护，状态变化时立即更新）：
+```
+> **当前状态: DESIGN**  <!-- DESIGN | APPROVED | DONE -->
+> **设计进度**：X / N 个阶段已完成设计与审查
+> **执行进度**：Y / N 个阶段已收敛
+```
+
+启动：
+```
+### 🚀 [YYYY-MM-DD HH:MM] Odyssey 启动
+- system: <system-name>
+- phases: p1-xxx, p2-yyy, ... (共 N 个阶段)
+```
+
+阶段设计完成：
+```
+### 📐 [YYYY-MM-DD HH:MM] Phase <p1-xxx> 设计
+- define: ✅
+- design: ✅ (adaptive, 跨 phase 感知)
+- review: ✅ _check.md 通过
+- 状态: 设计完成
+```
+
+整体设计批准：
+```
+### ★ [YYYY-MM-DD HH:MM] 整体设计批准
+- 用户: approved
+- 进入连续执行区
+```
+
+阶段执行收敛：
+```
+### 🏃 [YYYY-MM-DD HH:MM] Phase <p1-xxx> 执行
+- re-findings: ✅ (look 探索前序代码)
+- plan: ✅
+- autopilot: ✅ 收敛
+- 状态: 执行收敛
+```
+
+中断（handoff）：
+```
+### 🛑 [YYYY-MM-DD HH:MM] Phase <p2-yyy> 执行 — handoff
+- autopilot handoff: <原因>
+- 暂停，等待用户介入
+```
 """

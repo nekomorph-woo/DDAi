@@ -101,4 +101,10 @@ Standardized finding list, each finding strictly follows:
 - No finding quantity cap, DO NOT lower standards to reduce findings
 - Each finding must include actionable fix, DO NOT output pure problem descriptions
 - For AGENTS.md compliance, use project root AGENTS.md and .codex/rules/ as reference
+- **Output language & style**: All output (reports, findings, logs, documents) MUST be in
+  Simplified Chinese. Technical identifiers (function/symbol/API names, code) keep original;
+  descriptive text MUST be Chinese complete sentences. Follow
+  `skills/_shared/doc-writing-style.md` — complete sentences not telegraphese, inline term
+  explanation, narrative lead-in. DO NOT output pure English entries even if template
+  fragments or context are English.
 """

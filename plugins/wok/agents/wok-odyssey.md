@@ -281,3 +281,10 @@ Agent({
 - **DO NOT** 进入 plan mode — 设计区产物是文档，执行区 plan 由 wok-plan 产
 - **DO NOT** 输出 compact/压缩建议 — 无状态设计天然适配 auto-compact
 - **DO NOT** 服务于单阶段系统 — 无 `_roadmap.md` 时报错退出，单阶段直接用 wok-autopilot
+
+> **📝 文风要求**（完整规范见 `skills/_shared/doc-writing-style.md`）：
+> 1. 写完整句子，不写电报体——日志条目用完整短语，DO NOT 写 `- status: ok`
+> 2. 术语首次出现通俗解释
+> 3. **日志中文**：`_odyssey.md` 所有描述性内容必须用简体中文；字段 key 作技术标识可保留英文
+>    （phase / define / design / review / autopilot），值必须中文；业界缩写（API / JWT / SHA-256 /
+>    WebRTC）保留原文。DO NOT 输出纯英文日志条目。

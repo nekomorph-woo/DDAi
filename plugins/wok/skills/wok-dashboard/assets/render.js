@@ -61,8 +61,8 @@
   };
 
   const PIPELINE_TABS = {
-    feat: ['overview', 'findings', 'requirements', 'design', 'check', 'execution', 'autopilot', 'review'],
-    'feat-s': ['overview', 'findings', 'requirements', 'design', 'check', 'execution', 'autopilot', 'review'],
+    feat: ['overview', 'findings', 'prd', 'requirements', 'design', 'check', 'execution', 'autopilot', 'odyssey', 'review'],
+    'feat-s': ['overview', 'findings', 'prd', 'requirements', 'design', 'check', 'execution', 'autopilot', 'odyssey', 'review'],
     fix: ['overview', 'findings', 'issue', 'design', 'check', 'execution', 'autopilot', 'review'],
     exp: ['overview', 'findings', 'execution', 'autopilot', 'review'],
     cr: ['overview', 'review'],
@@ -71,20 +71,24 @@
   const PIPELINE_DOC_GROUPS = {
     feat: [
       { title: '探索文档', test: (n) => /^_findings/.test(n) },
+      { title: 'PRD', test: (n) => n === '_prd.md' || n.endsWith('/_prd.md') },
       { title: '需求文档', test: (n) => n === '_define.md' || n.endsWith('/_define.md') || n === '_roadmap.md' || n.endsWith('/_roadmap.md') },
       { title: '模块设计', test: (n) => n.includes('modules/') },
       { title: '校验文档', test: (n) => n === '_check.md' || n.endsWith('/_check.md') },
       { title: '执行文档', test: (n) => n === '_plan.md' || n.endsWith('/_plan.md') },
       { title: 'Autopilot 日志', test: (n) => n === '_autopilot.md' || n.endsWith('/_autopilot.md') },
+      { title: 'Odyssey 日志', test: (n) => n === '_odyssey.md' || n.endsWith('/_odyssey.md') },
       { title: '审查文档', test: (n) => n === '_review.md' || n.endsWith('/_review.md') },
     ],
     'feat-s': [
       { title: '探索文档', test: (n) => /^_findings/.test(n) },
+      { title: 'PRD', test: (n) => n === '_prd.md' || n.endsWith('/_prd.md') },
       { title: '需求文档', test: (n) => n === '_define.md' || n.endsWith('/_define.md') || n === '_roadmap.md' || n.endsWith('/_roadmap.md') },
       { title: '模块设计', test: (n) => n.includes('modules/') },
       { title: '校验文档', test: (n) => n === '_check.md' || n.endsWith('/_check.md') },
       { title: '执行文档', test: (n) => n === '_plan.md' || n.endsWith('/_plan.md') },
       { title: 'Autopilot 日志', test: (n) => n === '_autopilot.md' || n.endsWith('/_autopilot.md') },
+      { title: 'Odyssey 日志', test: (n) => n === '_odyssey.md' || n.endsWith('/_odyssey.md') },
       { title: '审查文档', test: (n) => n === '_review.md' || n.endsWith('/_review.md') },
     ],
     fix: [
@@ -115,7 +119,7 @@
   const TAB_LABELS = {
     overview: '概览', requirements: '需求', design: '设计',
     check: '校验', execution: '执行', autopilot: 'Autopilot', review: '审查',
-    issue: '问题', findings: '探索',
+    issue: '问题', findings: '探索', prd: 'PRD', odyssey: 'Odyssey',
   };
 
   function getPipelinePhases() { return PIPELINE_PHASES[PIPELINE_TYPE] || PIPELINE_PHASES.feat; }
@@ -418,10 +422,12 @@
     switch (tab) {
       case 'overview': renderOverview(); break;
       case 'requirements': renderRequirements(); break;
+      case 'prd': renderPrd(); break;
       case 'design': renderDesign(); break;
       case 'check': renderCheck(); break;
       case 'execution': renderExecution(); break;
       case 'autopilot': renderAutopilot(); break;
+      case 'odyssey': renderOdyssey(); break;
       case 'review': renderReview(); break;
       case 'issue': renderIssue(); break;
       case 'findings': renderFindings(); break;
@@ -952,11 +958,18 @@
     sidebarItems.forEach(item => {
       item.addEventListener('click', () => {
         const targetId = item.dataset.target;
+        // scrollIntoView 会触发 sticky sidebar 重排，致其内部 scrollTop 跳顶；先存后恢复
+        const sidebar = el.querySelector('.tab-sidebar');
+        const savedScroll = sidebar ? sidebar.scrollTop : 0;
         const target = el.querySelector('#' + targetId);
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         sidebarItems.forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         state.sidebarActive[tabKey] = targetId;
+        if (sidebar) {
+          sidebar.scrollTop = savedScroll;
+          setTimeout(() => { sidebar.scrollTop = savedScroll; }, 50);
+        }
       });
     });
     // IntersectionObserver for auto-highlight
@@ -1783,6 +1796,21 @@
     if (reqDocs.length > 1) bindSidebarNav(el, 'requirements');
   }
 
+  // ── PRD Tab ──
+  function renderPrd() {
+    const el = $('#tab-prd');
+    const key = findFile('_prd.md');
+    if (!key) {
+      el.innerHTML = '<p style="color:#737373;">未找到 PRD 文档（_prd.md）<br><span style="font-size:12px">运行 <code>wok-prd</code> 生成需求文档</span></p>';
+      return;
+    }
+    const parsed = state.parsed.get(key);
+    let html = renderFileStatusBar(key);
+    html += renderMd(parsed.body, key, parsed.bodyOffset);
+    el.innerHTML = html;
+    bindStatusToggles(el);
+  }
+
   // Parse _issue.md into structured sections for overview summary card.
   // Section names follow wok-issue SKILL.md output format:
   //   修复范围, 问题, 根因分析, TDD 修复计划, 验收标准
@@ -2119,8 +2147,14 @@
     // Nav click -> scroll to heading
     el.querySelectorAll('.findings-nav-link').forEach(link => {
       link.addEventListener('click', () => {
+        const nav = el.querySelector('.findings-nav');
+        const savedScroll = nav ? nav.scrollTop : 0;
         const target = el.querySelector(`#${CSS.escape(link.dataset.target)}`);
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (nav) {
+          nav.scrollTop = savedScroll;
+          setTimeout(() => { nav.scrollTop = savedScroll; }, 50);
+        }
       });
     });
   }
@@ -2229,11 +2263,18 @@
 
     el.innerHTML = html;
 
-    // Module tree click
+    // Module tree click — renderDesign 重建 .module-tree 致其 scrollTop 跳顶，存后恢复
     el.querySelectorAll('.module-item').forEach(item => {
       item.addEventListener('click', () => {
+        const tree = el.querySelector('.module-tree');
+        const savedScroll = tree ? tree.scrollTop : 0;
         state.activeModule = item.dataset.module || null;
         renderDesign();
+        const newTree = el.querySelector('.module-tree');
+        if (newTree) {
+          newTree.scrollTop = savedScroll;
+          requestAnimationFrame(() => { newTree.scrollTop = savedScroll; });
+        }
       });
     });
     bindStatusToggles(el);
@@ -2470,9 +2511,15 @@
     el.querySelectorAll('.exec-chip[data-step]').forEach(chip => {
       chip.style.cursor = 'pointer';
       chip.addEventListener('click', () => {
+        const sidebar = el.querySelector('.tab-sidebar');
+        const savedScroll = sidebar ? sidebar.scrollTop : 0;
         const scope = chip.dataset.planScope;
         const target = el.querySelector('#step-' + chip.dataset.step + '-' + scope.replace(/[^a-z0-9]/gi, ''));
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (sidebar) {
+          sidebar.scrollTop = savedScroll;
+          setTimeout(() => { sidebar.scrollTop = savedScroll; }, 50);
+        }
       });
     });
 
@@ -2834,6 +2881,57 @@
     if (logPhases.length > 1) bindSidebarNav(el, 'autopilot');
   }
 
+  // ── Odyssey Tab ──
+  // 解析 _odyssey.md 顶部状态字段（当前状态 / 设计进度 / 执行进度）。
+  // 编排日志的时间线与阶段表交给 renderMd 原生渲染（markdown 表格 + 列表）。
+  function parseOdysseyLog(raw) {
+    const body = raw.replace(/^---\n[\s\S]*?\n---\s*\n/, '');
+    let status = '';
+    let designProgress = '';
+    let execProgress = '';
+    for (const line of body.split('\n')) {
+      const sm = line.match(/当前状态[^\n]*?\b(DESIGN|APPROVED|DONE)\b/);
+      if (sm) { status = sm[1]; continue; }
+      const dm = line.match(/\*\*设计进度\*\*[：:]\s*([^\n]+)/);
+      if (dm) { designProgress = dm[1].trim(); continue; }
+      const em = line.match(/\*\*执行进度\*\*[：:]\s*([^\n]+)/);
+      if (em) { execProgress = em[1].trim(); continue; }
+    }
+    return { status, designProgress, execProgress, body };
+  }
+
+  function renderOdyssey() {
+    const el = $('#tab-odyssey');
+    const key = findFile('_odyssey.md');
+    if (!key) {
+      el.innerHTML = '<p style="color:#737373;">未找到 Odyssey 日志（_odyssey.md）<br><span style="font-size:12px">多阶段系统运行 <code>wok-odyssey</code> 自动生成编排日志</span></p>';
+      return;
+    }
+    const raw = state.files.get(key);
+    const log = parseOdysseyLog(raw);
+    const parsed = state.parsed.get(key);
+    let html = renderFileStatusBar(key);
+
+    // 状态摘要卡：当前状态（状态机三态色）+ 设计/执行进度
+    const stateColors = { DESIGN: '#E5A100', APPROVED: '#2563EB', DONE: '#22C55E' };
+    const stateLabels = { DESIGN: '设计区（待批准）', APPROVED: '执行区（已批准）', DONE: '已完成' };
+    html += '<div class="findings-summary-card">';
+    html += '<div class="findings-summary-metrics">';
+    if (log.status) html += `<span class="fsm-item" style="font-weight:600"><span style="color:${stateColors[log.status] || '#737373'}">${stateLabels[log.status] || log.status}</span></span>`;
+    if (log.designProgress) html += `<span class="fsm-item">📐 设计 ${esc(log.designProgress)}</span>`;
+    if (log.execProgress) html += `<span class="fsm-item">🏃 执行 ${esc(log.execProgress)}</span>`;
+    html += '</div>';
+    html += '</div>';
+
+    // 完整编排日志（含阶段状态表 + 时间线，renderMd 原生渲染）
+    html += `<details class="findings-details" open><summary class="findings-summary">完整编排日志</summary>`;
+    html += '<div class="findings-body">' + renderMd(parsed.body, key, parsed.bodyOffset) + '</div>';
+    html += '</details>';
+
+    el.innerHTML = html;
+    bindStatusToggles(el);
+  }
+
   function renderReview() {
     const el = $('#tab-review');
     const reviewKeys = findAllFiles('_review.md');
@@ -2973,11 +3071,17 @@
     el.querySelectorAll('.review-nav-tag').forEach(tag => {
       tag.style.cursor = 'pointer';
       tag.addEventListener('click', () => {
+        const sidebar = el.querySelector('.tab-sidebar');
+        const savedScroll = sidebar ? sidebar.scrollTop : 0;
         const target = el.querySelector(`#${CSS.escape(tag.dataset.target)}`);
         if (!target) return;
         const parentDetails = target.closest('details');
         if (parentDetails && !parentDetails.open) parentDetails.open = true;
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (sidebar) {
+          sidebar.scrollTop = savedScroll;
+          setTimeout(() => { sidebar.scrollTop = savedScroll; }, 50);
+        }
       });
     });
     if (reviewPhases.length > 1) bindSidebarNav(el, 'review');
@@ -3528,6 +3632,8 @@
   const highlightedRefs = new Set();
 
   function fileToTab(file) {
+    if (file.endsWith('_prd.md')) return 'prd';
+    if (file.endsWith('_odyssey.md')) return 'odyssey';
     if (file.endsWith('_define.md') || file.endsWith('_roadmap.md')) return 'requirements';
     if (file.endsWith('_issue.md')) return 'issue';
     if (file.endsWith('_findings.md')) return 'findings';

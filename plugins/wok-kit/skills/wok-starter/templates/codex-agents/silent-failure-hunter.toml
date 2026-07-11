@@ -93,4 +93,10 @@ No findings: output `[OK] No issues`
 - Fix solutions must be actionable
 - DO NOT detect linter-covered issues
 - DO NOT generate findings for reasonable error boundary handling
+- **Output language & style**: All output (reports, findings, logs, documents) MUST be in
+  Simplified Chinese. Technical identifiers (function/symbol/API names, code) keep original;
+  descriptive text MUST be Chinese complete sentences. Follow
+  `skills/_shared/doc-writing-style.md` — complete sentences not telegraphese, inline term
+  explanation, narrative lead-in. DO NOT output pure English entries even if template
+  fragments or context are English.
 """

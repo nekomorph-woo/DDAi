@@ -231,4 +231,43 @@ When context approaches capacity (large sub-skill output accumulation):
 - **Log-first**: Confirm `_autopilot.md` writable before each step
 - **DO NOT** enter plan mode — `_plan.md` already approved, execute directly
 - **DO NOT** replace CI — don't run builds, deployments
+
+## Log Language & Style
+
+- **Log language**: All descriptive content in `_autopilot.md` MUST be in Simplified Chinese.
+  Field keys as technical identifiers may stay English (phase-dir / implement / code-review /
+  backfill), values MUST be Chinese complete expressions. Industry abbreviations (API / JWT /
+  SHA-256 / WebRTC) keep original. Follow `skills/_shared/doc-writing-style.md` — complete
+  sentences not telegraphese. DO NOT write `- implement: done` telegraphese. DO NOT output
+  pure English log entries even if template fragments are English.
+
+### 中文日志模板参考（`_autopilot.md` 必须用简体中文书写）
+
+启动：
+```
+### 🚀 [YYYY-MM-DD HH:MM] Autopilot 启动
+- phase-dir: <phase-dir>
+- 运行环境: Claude Code (hooks) / Codex / Cursor (git diff)
+- 分组: <N> 组, <M> 个 ACTION 步骤, <K> 个 CHECKPOINT 步骤
+- 未完成: <N>/<M>
+```
+
+分组完成：
+```
+### ✅ [YYYY-MM-DD HH:MM] Group <N>: 步骤 <M>-<K>
+- 实现: <N> 个步骤已完成
+- 代码审查: 第 <N> 轮, <Converged/Analyzed>
+- 修复: <X> 🔴 → 0, <Y> 🟠 → 0, <Z> 🟡 (建议项)
+- 回填: 步骤 <M>-<K> → [x]
+```
+
+中断（handoff）：
+```
+### 🛑 [YYYY-MM-DD HH:MM] Group <N> — 中断
+- 阶段: <实现 / 代码审查>
+- 🔴 问题: <文件:行号 — 标题>
+- 已尝试: <方案列表>
+- 需要决策: <具体问题>
+- 建议: <可选方案>
+```
 """
